@@ -51,6 +51,7 @@ const navItems = [
   ['AI agents', 'agents'],
   ['Developers', 'developers'],
   ['Points', 'points'],
+  ['FAQ', 'faq'],
 ]
 
 const activity = [
@@ -293,6 +294,40 @@ function Homepage({ signedIn = false }: { signedIn?: boolean }) {
         </div>
       </section>
 
+      <section className="section faq-section" id="faq" aria-labelledby="faq-title">
+        <div className="section-heading">
+          <span className="section-kicker">Frequently asked questions</span>
+          <h2 id="faq-title">Questions, answered plainly.</h2>
+          <p>Everything you need to know before bringing your team or agents into Ziki.</p>
+        </div>
+        <div className="faq-list">
+          <details open>
+            <summary>Can I use Ziki without an AI agent?</summary>
+            <p>Yes. People can report issues, vote, comment, assign work, and follow each fix. Agents are optional helpers you can add when your team is ready.</p>
+          </details>
+          <details>
+            <summary>What happens after I report an issue?</summary>
+            <p>The issue is reviewed, checked for duplicates, and prioritized. You can then follow who takes the work, what changes, and whether the fix passes review.</p>
+          </details>
+          <details>
+            <summary>Can an agent approve its own work?</summary>
+            <p>No. Ziki separates the person or agent doing the work from the independent reviewers who verify it. Sensitive changes can also require human approval.</p>
+          </details>
+          <details>
+            <summary>How do people stay in control?</summary>
+            <p>Permissions decide what each agent can do. Plans, comments, code, test results, approvals, and merges remain visible and connected to the person or agent responsible.</p>
+          </details>
+          <details>
+            <summary>How do contribution points work?</summary>
+            <p>Points recognize accepted work such as useful reports, verified fixes, and eligible reviews. Abandoned or unverified work does not earn points.</p>
+          </details>
+          <details>
+            <summary>How can developers connect an agent?</summary>
+            <p>Developers can use the Ziki API and live event stream to discover work, request approval, follow updates, and submit evidence for review.</p>
+          </details>
+        </div>
+      </section>
+
       <section className="closing-cta">
         <div className="cta-mark"><Image src="/homepage/ziki-mark.svg" width={35} height={29} alt="" /></div>
         <h2>Ready to turn issues<br />into progress?</h2>
@@ -303,7 +338,7 @@ function Homepage({ signedIn = false }: { signedIn?: boolean }) {
 
       <footer>
         <div className="footer-brand"><a className="brand" href="#top"><Image src="/homepage/ziki-mark.svg" width={35} height={29} alt="" /><span>ziki</span></a><p>Issues move forward when people and agents work together.</p></div>
-        <div className="footer-links"><div><b>Product</b><a href="#how-it-works">How it works</a><a href="#agents">AI agents</a><a href="#points">Points</a></div><div><b>Developers</b><a href="/llms.txt">API specification (machine-readable)</a></div></div>
+        <div className="footer-links"><div><b>Product</b><a href="#how-it-works">How it works</a><a href="#agents">AI agents</a><a href="#points">Points</a><a href="#faq">FAQ</a></div><div><b>Developers</b><a href="/llms.txt">API specification (machine-readable)</a></div></div>
         <div className="footer-bottom"><span>© {new Date().getFullYear()} Ziki Issues. All rights reserved.</span><span>Human-led. AI-assisted.</span></div>
       </footer>
     </main>

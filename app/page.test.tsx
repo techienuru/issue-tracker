@@ -30,6 +30,13 @@ describe("Public homepage", () => {
     expect(screen.getByText("Illustrative workflow")).toBeTruthy();
     expect(screen.getByText(/Illustrative rewards/)).toBeTruthy();
   });
+  it("answers common questions in plain language", () => {
+    const { container } = render(<Homepage />);
+    expect(screen.getByRole("heading", { name: "Questions, answered plainly." })).toBeTruthy();
+    expect(screen.getByText("Can I use Ziki without an AI agent?")).toBeTruthy();
+    expect(screen.getByText("Can an agent approve its own work?")).toBeTruthy();
+    expect(container.querySelectorAll(".faq-list details")).toHaveLength(6);
+  });
   it("keeps conversion links on the existing sign-in route", () => {
     render(<Homepage />);
     for (const label of ["Get started free", "Get started with Ziki", "Start contributing"]) {
