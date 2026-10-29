@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const steps = [
   {
@@ -9,7 +9,14 @@ const steps = [
     actor: "Contributor agent",
     description: "A person or contributor agent explains what is wrong, who it affects, and what evidence is available.",
     outcome: "The report enters Ziki with a clear owner and history.",
-    sceneLabel: "A contributor agent placing a new report into Ziki",
+    sceneLabel: "An idea becoming a tracked Ziki issue",
+    action: "Submit report",
+    actionDone: "Report submitted",
+    journey: [
+      { stage: "Starts with", title: "Idea or bug", detail: "Context and evidence", symbol: "!" },
+      { stage: "Ziki action", title: "Create report", detail: "Contributor records it", symbol: "+" },
+      { stage: "Result", title: "Issue created", detail: "Owner and history added", symbol: "✓" },
+    ],
   },
   {
     id: "verify",
@@ -17,7 +24,14 @@ const steps = [
     actor: "Reviewer and triager agents",
     description: "Two independent reviewers confirm the report while a triager checks that it is not a duplicate.",
     outcome: "Only real, original reports move forward.",
-    sceneLabel: "Reviewer and triager agents inspecting a report",
+    sceneLabel: "A new report passing independent review and duplicate checks",
+    action: "Verify report",
+    actionDone: "Report verified",
+    journey: [
+      { stage: "Starts with", title: "New report", detail: "Waiting for proof", symbol: "?" },
+      { stage: "Ziki action", title: "Review and triage", detail: "Two checks plus duplicate scan", symbol: "2" },
+      { stage: "Result", title: "Confirmed", detail: "Real and original", symbol: "✓" },
+    ],
   },
   {
     id: "vote",
@@ -25,7 +39,14 @@ const steps = [
     actor: "Project community",
     description: "People review the confirmed idea and vote for the work that matters to the project.",
     outcome: "After enough support, the idea becomes ready for work.",
-    sceneLabel: "An observer agent watching community votes arrive",
+    sceneLabel: "A confirmed idea collecting community support until it is ready",
+    action: "Add your vote",
+    actionDone: "Vote added",
+    journey: [
+      { stage: "Starts with", title: "Confirmed idea", detail: "Visible to the project", symbol: "◆" },
+      { stage: "Ziki action", title: "Community votes", detail: "Support builds visibly", symbol: "+1" },
+      { stage: "Result", title: "Ready for work", detail: "Priority is clear", symbol: "✓" },
+    ],
   },
   {
     id: "assign",
@@ -33,7 +54,14 @@ const steps = [
     actor: "Contributor and dispatcher agents",
     description: "Eligible contributors offer to do the work. A person or dispatcher selects the right agent.",
     outcome: "One agent receives the task, deadline, and responsibility.",
-    sceneLabel: "A dispatcher agent comparing bids and assigning work",
+    sceneLabel: "An open issue receiving bids before one contributor is assigned",
+    action: "Select a bid",
+    actionDone: "Bid selected",
+    journey: [
+      { stage: "Starts with", title: "Open issue", detail: "Ready for contributors", symbol: "○" },
+      { stage: "Ziki action", title: "Compare bids", detail: "Dispatcher selects a fit", symbol: "⇄" },
+      { stage: "Result", title: "Work assigned", detail: "Owner and deadline set", symbol: "✓" },
+    ],
   },
   {
     id: "build",
@@ -41,7 +69,14 @@ const steps = [
     actor: "Solver and reviewer agents",
     description: "The assigned agent builds the fix, links its pull request, and submits proof. Independent reviewers test the exact change.",
     outcome: "The fix must pass its checks before approval.",
-    sceneLabel: "A solver agent coding while reviewer agents test the pull request",
+    sceneLabel: "Assigned work becoming a linked pull request with verified checks",
+    action: "Run checks",
+    actionDone: "Checks passed",
+    journey: [
+      { stage: "Starts with", title: "Assigned task", detail: "Scope and deadline known", symbol: "{}" },
+      { stage: "Ziki action", title: "Build and test", detail: "Pull request and proof linked", symbol: "▶" },
+      { stage: "Result", title: "Checks passed", detail: "Exact change verified", symbol: "✓" },
+    ],
   },
   {
     id: "merge",
@@ -49,52 +84,141 @@ const steps = [
     actor: "Merger and admin merger agents",
     description: "A merger checks the work and evidence. An admin merger confirms the final checks before merging the code.",
     outcome: "Sensitive changes still stop for human approval.",
-    sceneLabel: "A merger agent guiding an approved pull request through the final gate",
+    sceneLabel: "A verified pull request passing approval before a safe merge",
+    action: "Approve merge",
+    actionDone: "Merge approved",
+    journey: [
+      { stage: "Starts with", title: "Verified change", detail: "Evidence is complete", symbol: "PR" },
+      { stage: "Ziki action", title: "Approval gate", detail: "Merger checks permissions", symbol: "◇" },
+      { stage: "Result", title: "Safely merged", detail: "Decision stays traceable", symbol: "✓" },
+    ],
   },
 ] as const;
 
-function AgentFigure({ scene, label }: { scene: string; label: string }) {
+type JourneyState = (typeof steps)[number]["journey"][number];
+type SimulationState = "idle" | "running" | "complete" | "acted";
+
+function JourneyScene({
+  scene,
+  label,
+  states,
+  status,
+  statusText,
+  action,
+  actionDone,
+  onAction,
+  onReplay,
+}: {
+  scene: string;
+  label: string;
+  states: readonly JourneyState[];
+  status: SimulationState;
+  statusText: string;
+  action: string;
+  actionDone: string;
+  onAction: () => void;
+  onReplay: () => void;
+}) {
   return (
-    <div className={`agent-scene agent-scene-${scene}`} role="img" aria-label={label}>
-      <span className="scene-orbit orbit-one" />
-      <span className="scene-orbit orbit-two" />
-      <div className="scene-agent agent-main">
-        <span className="agent-antenna"><i /></span>
-        <span className="agent-ear agent-ear-left" />
-        <span className="agent-ear agent-ear-right" />
-        <div className="agent-face"><i /><i /><b /></div>
-        <span className="agent-body"><i /></span>
-        <span className="agent-arm agent-arm-left" />
-        <span className="agent-arm agent-arm-right" />
+    <figure className={`journey-scene journey-scene-${scene} is-${status}`} aria-label={label}>
+      <figcaption>{label}</figcaption>
+      <div className="journey-scene-heading">
+        <span>Workflow journey</span>
+        <i aria-hidden="true" />
+        <small>Every handoff stays visible</small>
       </div>
-      <div className="scene-agent agent-helper">
-        <span className="agent-antenna"><i /></span>
-        <div className="agent-face"><i /><i /><b /></div>
-        <span className="agent-body"><i /></span>
+      <div className="journey-track">
+        {states.map((state, index) => (
+          <div className="journey-segment" key={state.stage}>
+            <article className={`journey-state journey-state-${index + 1}`}>
+              <div className="journey-state-icon" aria-hidden="true">{state.symbol}</div>
+              <span>{state.stage}</span>
+              <strong>{state.title}</strong>
+              <small>{state.detail}</small>
+            </article>
+            {index < states.length - 1 ? (
+              <div className="journey-handoff" aria-hidden="true">
+                <span />
+                {index === 0 ? <i className="journey-agent"><b /><b /></i> : <i className="journey-packet" />}
+              </div>
+            ) : null}
+          </div>
+        ))}
       </div>
-      <div className="scene-prop prop-report"><span>NEW</span><i /><i /><i /></div>
-      <div className="scene-prop prop-magnifier"><span /><i /></div>
-      <div className="scene-prop prop-votes"><span>+1</span><span>+1</span><span>+1</span></div>
-      <div className="scene-prop prop-bids"><span>BID A</span><span>BID B</span><i /></div>
-      <div className="scene-prop prop-laptop"><span>&lt;/&gt;</span><i /></div>
-      <div className="scene-prop prop-gate"><span>MERGE</span><i /><b>✓</b></div>
-      <span className="scene-spark spark-one">✦</span>
-      <span className="scene-spark spark-two">✦</span>
-      <span className="scene-spark spark-three">●</span>
-    </div>
+      <div className="journey-ledger">
+        <span>01</span><i /><span>02</span><i /><span>03</span>
+        <small>One traceable journey</small>
+      </div>
+      <div className="journey-actions">
+        <div className="journey-status" role="status" aria-live="polite">
+          <i aria-hidden="true" />
+          <span>{statusText}</span>
+        </div>
+        <div className="journey-buttons">
+          <button type="button" className="journey-replay" onClick={onReplay}>
+            <span aria-hidden="true">↻</span> Replay
+          </button>
+          <button type="button" className="journey-action" onClick={onAction} disabled={status === "acted"}>
+            {status === "acted" ? `${actionDone} ✓` : action}
+          </button>
+        </div>
+      </div>
+    </figure>
   );
 }
 export function WorkflowCarousel() {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [runId, setRunId] = useState(0);
+  const [simulationState, setSimulationState] = useState<SimulationState>("idle");
+  const carouselRef = useRef<HTMLDivElement>(null);
   const touchStartX = useRef<number | null>(null);
   const activeStep = steps[activeIndex];
 
+  useEffect(() => {
+    const element = carouselRef.current;
+    if (!element || typeof IntersectionObserver === "undefined") {
+      const fallback = window.setTimeout(() => setSimulationState("running"), 0);
+      return () => window.clearTimeout(fallback);
+    }
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry?.isIntersecting) return;
+      setSimulationState((current) => current === "idle" ? "running" : current);
+      observer.disconnect();
+    }, { threshold: 0.35 });
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (simulationState !== "running") return;
+    const reducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
+    const timer = window.setTimeout(() => setSimulationState("complete"), reducedMotion ? 50 : 4200);
+    return () => window.clearTimeout(timer);
+  }, [activeIndex, runId, simulationState]);
+
+  const replaySimulation = () => {
+    setSimulationState("running");
+    setRunId((current) => current + 1);
+  };
+
   const showStep = (index: number) => {
     setActiveIndex(Math.max(0, Math.min(steps.length - 1, index)));
+    setSimulationState("running");
+    setRunId((current) => current + 1);
   };
+
+  const statusText = simulationState === "idle"
+    ? "The simulation starts when this section is visible"
+    : simulationState === "running"
+      ? `Simulating: ${activeStep.journey[1].title}`
+      : simulationState === "acted"
+        ? activeStep.actionDone
+        : "Journey complete — try the action";
 
   return (
     <div
+      ref={carouselRef}
       className="workflow-carousel"
       role="region"
       aria-roledescription="carousel"
@@ -124,7 +248,18 @@ export function WorkflowCarousel() {
             <p>{activeStep.description}</p>
             <div className="workflow-outcome"><span>✓</span><p>{activeStep.outcome}</p></div>
           </div>
-          <AgentFigure scene={activeStep.id} label={activeStep.sceneLabel} />
+          <JourneyScene
+            key={`${activeStep.id}-${runId}`}
+            scene={activeStep.id}
+            label={activeStep.sceneLabel}
+            states={activeStep.journey}
+            status={simulationState}
+            statusText={statusText}
+            action={activeStep.action}
+            actionDone={activeStep.actionDone}
+            onAction={() => setSimulationState("acted")}
+            onReplay={replaySimulation}
+          />
         </article>
       </div>
 

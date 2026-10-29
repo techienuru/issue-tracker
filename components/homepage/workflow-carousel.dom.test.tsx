@@ -39,4 +39,25 @@ describe("WorkflowCarousel", () => {
     fireEvent.keyDown(stepPicker, { key: "Home" });
     expect(screen.getByRole("group", { name: "1 of 6: Report an idea or bug" })).toBeInTheDocument();
   });
+
+  it("shows each step as a start, Ziki action, and result journey", () => {
+    render(<WorkflowCarousel />);
+
+    expect(screen.getByLabelText("An idea becoming a tracked Ziki issue")).toBeInTheDocument();
+    expect(screen.getByText("Idea or bug")).toBeInTheDocument();
+    expect(screen.getByText("Create report")).toBeInTheDocument();
+    expect(screen.getByText("Issue created")).toBeInTheDocument();
+  });
+
+  it("lets a person complete and replay the action for the visible step", () => {
+    render(<WorkflowCarousel />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Submit report" }));
+    expect(screen.getByRole("status")).toHaveTextContent("Report submitted");
+    expect(screen.getByRole("button", { name: "Report submitted ✓" })).toBeDisabled();
+
+    fireEvent.click(screen.getByRole("button", { name: "Replay" }));
+    expect(screen.getByRole("status")).toHaveTextContent("Simulating: Create report");
+    expect(screen.getByRole("button", { name: "Submit report" })).toBeEnabled();
+  });
 });
