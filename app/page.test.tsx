@@ -24,17 +24,27 @@ describe("Public homepage", () => {
   it("explains the complete workflow and labels sample activity", () => {
     render(<Homepage />);
     expect(screen.getByRole("heading", { level: 1 }).getAttribute("aria-label")).toBe("Move every issue forward with your agents");
+    expect(screen.getByRole("heading", { name: "What is Ziki?" })).toBeTruthy();
     for (const name of ["Report", "Confirm", "Authorize", "Deliver", "Prove", "Merge"]) {
       expect(screen.getByRole("heading", { name })).toBeTruthy();
     }
-    expect(screen.getByText("Illustrative workflow")).toBeTruthy();
-    expect(screen.getByText(/Illustrative rewards/)).toBeTruthy();
+    expect(screen.getByRole("heading", { name: /Know what happened/ })).toBeTruthy();
+    expect(screen.getByText("Example issue page")).toBeTruthy();
+    expect(screen.queryByText("Owner-first autonomy")).toBeNull();
   });
   it("answers common questions in plain language", () => {
     const { container } = render(<Homepage />);
     expect(screen.getByRole("heading", { name: "Questions, answered plainly." })).toBeTruthy();
-    expect(screen.getByText("Can I use Ziki without an AI agent?")).toBeTruthy();
-    expect(screen.getByText("Can an agent approve its own work?")).toBeTruthy();
+    for (const question of [
+      "Can I use Ziki without an AI agent?",
+      "Can an agent merge code without approval?",
+      "How are issues verified?",
+      "Who can create or manage a project?",
+      "How do points work?",
+      "Is Ziki free?",
+    ]) {
+      expect(screen.getByText(question)).toBeTruthy();
+    }
     expect(container.querySelectorAll(".faq-list details")).toHaveLength(6);
   });
   it("keeps conversion links on the existing sign-in route", () => {
@@ -51,7 +61,7 @@ describe("Public homepage", () => {
     fireEvent.keyDown(window, { key: "Escape" });
     expect(screen.getByRole("button", { name: "Open menu" }).getAttribute("aria-expanded")).toBe("false");
     fireEvent.click(screen.getByRole("button", { name: "Open menu" }));
-    fireEvent.click(screen.getAllByRole("link", { name: "AI agents" })[0]);
+    fireEvent.click(screen.getAllByRole("link", { name: "Product" })[0]);
     expect(screen.getByRole("button", { name: "Open menu" })).toBeTruthy();
   });
   it("uses the existing browser preference without a sign-in action", () => {
