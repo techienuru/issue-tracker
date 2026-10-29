@@ -62,10 +62,9 @@
 }
 
 @keyframes ziki-workshop-bug-run {
-  0%, 12% { left: 7%; opacity: 1; transform: translateY(0) rotate(-7deg); }
-  34%, 46% { left: 46%; opacity: 1; transform: translateY(-4px) rotate(5deg); }
-  70%, 82% { left: 84%; opacity: 1; transform: scale(0.82); }
-  90%, 100% { left: 84%; opacity: 0; transform: scale(0.45); }
+  0%, 12% { left: 7%; transform: translateY(0) rotate(-7deg); }
+  45%, 58% { left: 46%; transform: translateY(-4px) rotate(5deg); }
+  90%, 100% { left: 84%; transform: scale(0.82); }
 }
 
 @keyframes ziki-workshop-spark {
@@ -78,12 +77,20 @@
   50% { transform: translateY(-5px) rotate(1deg); }
 }
 
+@keyframes ziki-workshop-bot-error {
+  0%, 100% { transform: translateX(0) rotate(-1deg); }
+  25% { transform: translateX(-5px) rotate(-3deg); }
+  75% { transform: translateX(5px) rotate(3deg); }
+}
+
 @keyframes ziki-workshop-light {
   0%, 46%, 100% { background: #ffb45e; box-shadow: 0 0 0 4px rgba(255, 180, 94, 0.12); }
   47%, 82% { background: #73e6b1; box-shadow: 0 0 0 6px rgba(115, 230, 177, 0.12); }
 }
 
 .ziki-workshop {
+  --ziki-eye-x: 0px;
+  --ziki-eye-y: 0px;
   isolation: isolate;
   overflow: hidden;
   border: 1px solid rgba(143, 201, 255, 0.2);
@@ -162,6 +169,7 @@
 }
 
 .ziki-workshop-station {
+  position: relative;
   display: flex;
   width: 72px;
   flex-direction: column;
@@ -170,6 +178,50 @@
   color: #a9bcdf;
   font-size: 11px;
   font-weight: 800;
+  appearance: none;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.ziki-workshop-station::after {
+  position: absolute;
+  bottom: calc(100% + 5px);
+  left: 50%;
+  z-index: 8;
+  width: 156px;
+  padding: 7px 9px;
+  border: 1px solid #42618f;
+  border-radius: 9px;
+  background: #081228;
+  color: #e8f1ff;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.3);
+  content: attr(data-tip);
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.35;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 4px);
+  transition: opacity 160ms ease, transform 160ms ease;
+}
+
+.ziki-workshop-station:hover::after,
+.ziki-workshop-station:focus-visible::after {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.ziki-workshop-station:focus-visible {
+  outline: 2px solid #8fc9ff;
+  outline-offset: 5px;
+  border-radius: 8px;
+}
+
+.ziki-workshop-station:disabled {
+  cursor: wait;
 }
 
 .ziki-workshop-station-icon {
@@ -199,6 +251,13 @@
   color: #73e6b1;
 }
 
+.ziki-workshop[data-state="reported"] .ziki-workshop-station-1 .ziki-workshop-station-icon,
+.ziki-workshop[data-state="claimed"] .ziki-workshop-station-2 .ziki-workshop-station-icon,
+.ziki-workshop[data-state="fixed"] .ziki-workshop-station-3 .ziki-workshop-station-icon {
+  outline: 2px solid rgba(143, 201, 255, 0.8);
+  outline-offset: 3px;
+}
+
 .ziki-workshop-bug {
   position: absolute;
   top: 43px;
@@ -208,13 +267,34 @@
   height: 27px;
   place-items: center;
   border-radius: 9px;
+  border: 0;
   background: #ffb45e;
   color: #55300d;
   box-shadow: 0 0 22px rgba(255, 180, 94, 0.5);
-  animation: ziki-workshop-bug-run 8s cubic-bezier(0.45, 0, 0.3, 1) infinite;
+  cursor: pointer;
+  transition: left 650ms cubic-bezier(0.2, 0.75, 0.2, 1), transform 250ms ease, background 250ms ease;
 }
 
 .ziki-workshop-bug svg { width: 18px; }
+
+.ziki-workshop-bug:focus-visible {
+  outline: 3px solid white;
+  outline-offset: 3px;
+}
+
+.ziki-workshop-bug:disabled { cursor: wait; }
+
+.ziki-workshop[data-state="claimed"] .ziki-workshop-bug { left: 46%; transform: translateY(-4px) rotate(5deg); }
+.ziki-workshop[data-state="fixed"] .ziki-workshop-bug {
+  left: 84%;
+  background: #73e6b1;
+  color: #0b5134;
+  transform: scale(0.88);
+}
+.ziki-workshop[data-state="error"] .ziki-workshop-bug { left: 7%; transform: rotate(-8deg); }
+.ziki-workshop[data-state="repairing"] .ziki-workshop-bug {
+  animation: ziki-workshop-bug-run 1.65s cubic-bezier(0.45, 0, 0.3, 1) both;
+}
 
 .ziki-workshop-sparks {
   position: absolute;
@@ -230,8 +310,14 @@
   height: 10px;
   border-radius: 999px;
   background: #73e6b1;
-  animation: ziki-workshop-spark 8s ease-out infinite;
+  opacity: 0;
 }
+
+.ziki-workshop[data-state="repairing"] .ziki-workshop-sparks span {
+  animation: ziki-workshop-spark 1.65s ease-out both;
+}
+
+.ziki-workshop[data-state="fixed"] .ziki-workshop-sparks span { opacity: 1; }
 
 .ziki-workshop-sparks span:nth-child(1) { top: 0; left: 17px; }
 .ziki-workshop-sparks span:nth-child(2) { top: 13px; right: 0; rotate: 55deg; }
@@ -290,6 +376,8 @@
   border-radius: 999px;
   background: #73e6b1;
   box-shadow: 0 0 8px rgba(115, 230, 177, 0.7);
+  transform: translate(var(--ziki-eye-x), var(--ziki-eye-y));
+  transition: transform 90ms linear;
 }
 
 .ziki-workshop-body {
@@ -317,6 +405,15 @@
   background: #8fc9ff;
   transform: rotate(-28deg);
   transform-origin: left center;
+  transition: transform 220ms ease;
+}
+
+.ziki-workshop[data-state="error"] .ziki-workshop-bot {
+  animation: ziki-workshop-bot-error 260ms ease-in-out 2;
+}
+
+.ziki-workshop[data-state="error"] .ziki-workshop-arm {
+  transform: rotate(-8deg) scaleX(1.35);
 }
 
 .ziki-workshop-tool {
@@ -336,14 +433,48 @@
 .ziki-workshop-tool-left { left: 10%; transform: rotate(-8deg); }
 .ziki-workshop-tool-right { left: 29%; color: #ffb45e; transform: rotate(7deg); }
 
+.ziki-workshop-status {
+  position: absolute;
+  right: 105px;
+  bottom: 15px;
+  left: 8%;
+  display: flex;
+  min-height: 34px;
+  align-items: center;
+  gap: 10px;
+  color: #c9d6ef;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.ziki-workshop-status button {
+  min-height: 30px;
+  padding: 5px 10px;
+  border: 1px solid rgba(115, 230, 177, 0.55);
+  border-radius: 999px;
+  background: rgba(20, 108, 67, 0.3);
+  color: #b9f5d9;
+  font: inherit;
+  cursor: pointer;
+}
+
+.ziki-workshop-status button:hover { background: rgba(20, 108, 67, 0.55); }
+.ziki-workshop-status button:focus-visible { outline: 2px solid white; outline-offset: 2px; }
+
 @media (max-width: 520px) {
-  .ziki-workshop { min-height: 220px; }
+  .ziki-workshop { min-height: 255px; }
   .ziki-workshop-sign { top: 14px; }
   .ziki-workshop-bench { top: 58px; right: 5%; left: 5%; }
-  .ziki-workshop-bug { left: 84%; animation: none; transform: scale(0.82); }
-  .ziki-workshop-sparks span { opacity: 1; animation: none; }
+  .ziki-workshop[data-state="repairing"] .ziki-workshop-bug { animation-duration: 1.2s; }
+  .ziki-workshop-station::after { display: none; }
   .ziki-workshop-bot,
   .ziki-workshop-tool { display: none; }
+  .ziki-workshop-status { right: 5%; bottom: 10px; left: 5%; justify-content: center; text-align: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ziki-workshop-face i { transform: none; }
+  .ziki-workshop[data-state="repairing"] .ziki-workshop-bug { left: 84%; transform: scale(0.82); }
 }
 
 .ziki-auth-g-btn {

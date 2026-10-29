@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { BASE_PATH } from "@/lib/base-path";
 import { REPORT_FORM_URL } from "@/lib/report-form";
+import { WorkshopScene } from "./workshop-scene";
 import "./auth-split-frame.css";
 
 function brandAsset(file: string) {
@@ -28,70 +29,7 @@ function CheckIcon() {
   );
 }
 
-function BugIcon() {
-  return (
-    <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
-      <path d="M11 10.5 8 7.5M21 10.5l3-3M9 16H5M27 16h-4M9.5 22 6 25M22.5 22l3.5 3" />
-      <rect x="10" y="9" width="12" height="16" rx="6" />
-      <path d="M10 16h12M16 9v16" />
-    </svg>
-  );
-}
-
-function WorkshopScene() {
-  const stations = [
-    { label: "Reported", icon: <BugIcon /> },
-    {
-      label: "Claimed",
-      icon: (
-        <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
-          <path d="M8 24h16M10 24v-9a6 6 0 0 1 12 0v9M13 15h6M16 12v6" />
-        </svg>
-      ),
-    },
-    {
-      label: "Fixed",
-      icon: (
-        <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
-          <circle cx="16" cy="16" r="10" />
-          <path d="m11.5 16 3 3 6-7" />
-        </svg>
-      ),
-    },
-  ];
-
-  return (
-    <div className="ziki-workshop relative min-h-[300px] w-full max-w-[560px] flex-1" aria-hidden="true">
-      <div className="ziki-workshop-sign">
-        <span className="ziki-workshop-sign-light" />
-        Ziki repair line
-      </div>
-      <div className="ziki-workshop-bench">
-        <div className="ziki-workshop-track" />
-        <div className="ziki-workshop-bug"><BugIcon /></div>
-        <div className="ziki-workshop-sparks"><span /><span /><span /></div>
-        <div className="ziki-workshop-stations">
-          {stations.map((station, index) => (
-            <div className={`ziki-workshop-station ziki-workshop-station-${index + 1}`} key={station.label}>
-              <span className="ziki-workshop-station-icon">{station.icon}</span>
-              <span>{station.label}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-      <div className="ziki-workshop-bot">
-        <span className="ziki-workshop-antenna" />
-        <span className="ziki-workshop-face"><i /><i /></span>
-        <span className="ziki-workshop-body"><b>ZI</b></span>
-        <span className="ziki-workshop-arm" />
-      </div>
-      <span className="ziki-workshop-tool ziki-workshop-tool-left">⌁</span>
-      <span className="ziki-workshop-tool ziki-workshop-tool-right">✦</span>
-    </div>
-  );
-}
-
-function BrandPanel() {
+function BrandPanel({ loginError = false }: { loginError?: boolean }) {
   return (
     <section
       aria-label="About Ziki"
@@ -158,7 +96,7 @@ function BrandPanel() {
         </h1>
       </div>
 
-      <WorkshopScene />
+      <WorkshopScene initialError={loginError} />
 
       <div className="relative flex flex-wrap gap-6 text-sm text-[#C9D6EF]">
         {["Report", "Vote", "Track", "Earn points"].map((label) => (
@@ -295,6 +233,7 @@ export function AuthSplitFrame({
   title,
   description,
   mark = true,
+  loginError = false,
 }: {
   children: ReactNode;
   panelLabel?: string;
@@ -302,10 +241,11 @@ export function AuthSplitFrame({
   title: string;
   description?: ReactNode;
   mark?: boolean;
+  loginError?: boolean;
 }) {
   return (
     <div className="zk-motion ziki-auth-frame flex min-h-screen flex-col bg-zk-bg text-zk-text lg:flex-row">
-      <BrandPanel />
+      <BrandPanel loginError={loginError} />
       <section
         aria-label={panelLabel}
         className="relative flex w-full flex-col items-center justify-center gap-7 px-6 py-10 sm:px-8 lg:flex-[1_1_480px]"
