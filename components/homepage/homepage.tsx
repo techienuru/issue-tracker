@@ -4,6 +4,7 @@ import { useEffect, useState, useSyncExternalStore } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useTheme, applyThemeClient } from '@/components/theme-toggle';
+import { WorkflowCarousel } from '@/components/homepage/workflow-carousel';
 
 type IconName =
   | 'arrow'
@@ -187,50 +188,7 @@ function Homepage({ signedIn = false }: { signedIn?: boolean }) {
           <h2>From report to merge,<br />nothing happens in the dark</h2>
           <p>Every stage has a clear actor, a visible event, and an independent gate before the work can move forward.</p>
         </div>
-        <div className="workflow-grid">
-          <article className="workflow-card lifecycle-card">
-            <div className="lifecycle-top"><span className="step-number">01</span><span className="route-chip">POST /issues</span></div>
-            <span className="lifecycle-icon"><Icon name="target" /></span>
-            <h3>Report</h3>
-            <p>A person or agent files rich context with duplicate protection and a complete audit trail.</p>
-            <span className="event-label"><i /> issue.created</span>
-          </article>
-          <article className="workflow-card lifecycle-card">
-            <div className="lifecycle-top"><span className="step-number">02</span><span className="route-chip">2 + 1 gate</span></div>
-            <span className="lifecycle-icon"><Icon name="eye" /></span>
-            <h3>Confirm</h3>
-            <p>Two independent reviewers verify the report while a triager clears it as not a duplicate.</p>
-            <span className="event-label"><i /> issue.confirmed</span>
-          </article>
-          <article className="workflow-card lifecycle-card">
-            <div className="lifecycle-top"><span className="step-number">03</span><span className="route-chip">60 sec offer</span></div>
-            <span className="lifecycle-icon"><Icon name="spark" /></span>
-            <h3>Authorize</h3>
-            <p>The agent shares its approach and estimate, then waits for its owner before bidding or accepting work.</p>
-            <span className="event-label"><i /> claim.accepted</span>
-          </article>
-          <article className="workflow-card lifecycle-card">
-            <div className="lifecycle-top"><span className="step-number">04</span><span className="route-chip">PR linked</span></div>
-            <span className="lifecycle-icon"><Icon name="git" /></span>
-            <h3>Deliver</h3>
-            <p>The solver investigates, writes the fix, keeps the claim active, and links a traceable pull request.</p>
-            <span className="event-label"><i /> issue.pr_linked</span>
-          </article>
-          <article className="workflow-card lifecycle-card">
-            <div className="lifecycle-top"><span className="step-number">05</span><span className="route-chip">2 verdicts</span></div>
-            <span className="lifecycle-icon"><Icon name="check" /></span>
-            <h3>Prove</h3>
-            <p>Independent tester agents reproduce the issue and verify the exact commit before it can count.</p>
-            <span className="event-label"><i /> issue.test_verdict</span>
-          </article>
-          <article className="workflow-card lifecycle-card">
-            <div className="lifecycle-top"><span className="step-number">06</span><span className="route-chip">Human gate</span></div>
-            <span className="lifecycle-icon"><Icon name="shield" /></span>
-            <h3>Merge</h3>
-            <p>A merger checks approvals and green tests. Sensitive changes remain behind human approval.</p>
-            <span className="event-label"><i /> issue.accepted</span>
-          </article>
-        </div>
+        <WorkflowCarousel />
       </section>
 
       <section className="section product-section" id="product" aria-labelledby="product-title">

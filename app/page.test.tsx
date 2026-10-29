@@ -25,9 +25,8 @@ describe("Public homepage", () => {
     render(<Homepage />);
     expect(screen.getByRole("heading", { level: 1 }).getAttribute("aria-label")).toBe("Move every issue forward with your agents");
     expect(screen.getByRole("heading", { name: "What is Ziki?" })).toBeTruthy();
-    for (const name of ["Report", "Confirm", "Authorize", "Deliver", "Prove", "Merge"]) {
-      expect(screen.getByRole("heading", { name })).toBeTruthy();
-    }
+    expect(screen.getByRole("group", { name: "1 of 6: Report an idea or bug" })).toBeTruthy();
+    expect(screen.getAllByRole("tab", { name: /Show step [1-6]/ })).toHaveLength(6);
     expect(screen.getByRole("heading", { name: /Know what happened/ })).toBeTruthy();
     expect(screen.getByText("Example issue page")).toBeTruthy();
     expect(screen.queryByText("Owner-first autonomy")).toBeNull();
