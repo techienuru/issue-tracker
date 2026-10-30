@@ -1,36 +1,32 @@
 // @vitest-environment jsdom
 import "@testing-library/jest-dom/vitest";
 import { act, cleanup, render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { updateLoginWorkshop } from "@/lib/login-workshop-events";
 import { WorkshopScene } from "./workshop-scene";
 
-afterEach(() => cleanup());
+beforeEach(() => vi.useFakeTimers());
+afterEach(() => {
+  cleanup();
+  vi.useRealTimers();
+});
 
 describe("WorkshopScene", () => {
-  it("lets a person move an issue from reported to fixed and restart", async () => {
-    const user = userEvent.setup();
+  it("automatically moves an issue from reported to fixed", () => {
     render(<WorkshopScene />);
 
-    await user.click(screen.getByRole("button", { name: "Move the reported issue to claimed" }));
-    expect(screen.getByText(/Claimed\. Tap again/)).toBeInTheDocument();
+    expect(screen.getByText(/new bug is waiting/)).toBeInTheDocument();
+    act(() => vi.advanceTimersByTime(900));
+    expect(screen.getByText(/moving in to inspect/)).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "Finish repairing the issue" }));
-    expect(screen.getByText("Ready to ship!")).toBeInTheDocument();
+    act(() => vi.advanceTimersByTime(1400));
+    expect(screen.getByText(/repair is moving/)).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "Repair another" }));
-    expect(screen.getByText(/Tap the bug to send it/)).toBeInTheDocument();
-  });
+    act(() => vi.advanceTimersByTime(1300));
+    expect(screen.getByText(/ready to ship/)).toBeInTheDocument();
 
-  it("makes every repair stage directly selectable for keyboard and touch users", async () => {
-    const user = userEvent.setup();
-    render(<WorkshopScene />);
-
-    const fixed = screen.getByRole("button", { name: /Fixed: The repair has been checked/ });
-    await user.click(fixed);
-    expect(fixed).toHaveAttribute("aria-pressed", "true");
-    expect(screen.getByText("Ready to ship!")).toBeInTheDocument();
+    act(() => vi.advanceTimersByTime(11201));
+    expect(screen.getByText(/moving in to inspect/)).toBeInTheDocument();
   });
 
   it("responds to sign-in loading and error events", () => {

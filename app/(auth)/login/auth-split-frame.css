@@ -178,50 +178,6 @@
   color: #a9bcdf;
   font-size: 11px;
   font-weight: 800;
-  appearance: none;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  font-family: inherit;
-  cursor: pointer;
-}
-
-.ziki-workshop-station::after {
-  position: absolute;
-  bottom: calc(100% + 5px);
-  left: 50%;
-  z-index: 8;
-  width: 156px;
-  padding: 7px 9px;
-  border: 1px solid #42618f;
-  border-radius: 9px;
-  background: #081228;
-  color: #e8f1ff;
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.3);
-  content: attr(data-tip);
-  font-size: 10px;
-  font-weight: 600;
-  line-height: 1.35;
-  opacity: 0;
-  pointer-events: none;
-  transform: translate(-50%, 4px);
-  transition: opacity 160ms ease, transform 160ms ease;
-}
-
-.ziki-workshop-station:hover::after,
-.ziki-workshop-station:focus-visible::after {
-  opacity: 1;
-  transform: translate(-50%, 0);
-}
-
-.ziki-workshop-station:focus-visible {
-  outline: 2px solid #8fc9ff;
-  outline-offset: 5px;
-  border-radius: 8px;
-}
-
-.ziki-workshop-station:disabled {
-  cursor: wait;
 }
 
 .ziki-workshop-station-icon {
@@ -251,7 +207,7 @@
   color: #73e6b1;
 }
 
-.ziki-workshop[data-state="reported"] .ziki-workshop-station-1 .ziki-workshop-station-icon,
+.ziki-workshop[data-state="approaching"] .ziki-workshop-station-1 .ziki-workshop-station-icon,
 .ziki-workshop[data-state="claimed"] .ziki-workshop-station-2 .ziki-workshop-station-icon,
 .ziki-workshop[data-state="fixed"] .ziki-workshop-station-3 .ziki-workshop-station-icon {
   outline: 2px solid rgba(143, 201, 255, 0.8);
@@ -261,29 +217,22 @@
 .ziki-workshop-bug {
   position: absolute;
   top: 43px;
+  left: 7%;
   z-index: 3;
   display: grid;
   width: 27px;
   height: 27px;
   place-items: center;
   border-radius: 9px;
-  border: 0;
   background: #ffb45e;
   color: #55300d;
   box-shadow: 0 0 22px rgba(255, 180, 94, 0.5);
-  cursor: pointer;
   transition: left 650ms cubic-bezier(0.2, 0.75, 0.2, 1), transform 250ms ease, background 250ms ease;
 }
 
 .ziki-workshop-bug svg { width: 18px; }
 
-.ziki-workshop-bug:focus-visible {
-  outline: 3px solid white;
-  outline-offset: 3px;
-}
-
-.ziki-workshop-bug:disabled { cursor: wait; }
-
+.ziki-workshop[data-state="approaching"] .ziki-workshop-bug { left: 7%; transform: rotate(-7deg) scale(1.08); }
 .ziki-workshop[data-state="claimed"] .ziki-workshop-bug { left: 46%; transform: translateY(-4px) rotate(5deg); }
 .ziki-workshop[data-state="fixed"] .ziki-workshop-bug {
   left: 84%;
@@ -331,6 +280,88 @@
   height: 82px;
   animation: ziki-workshop-bot-bob 4s ease-in-out infinite;
 }
+
+.ziki-workshop-agent-team {
+  position: absolute;
+  bottom: 14px;
+  left: 10%;
+  z-index: 5;
+  display: flex;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.ziki-workshop-mini-agent {
+  position: relative;
+  display: grid;
+  width: 34px;
+  height: 37px;
+  place-items: end center;
+  border-radius: 10px 10px 12px 12px;
+  background: #3978f6;
+  box-shadow: 0 7px 16px rgba(0, 0, 0, 0.28);
+  color: white;
+  font-size: 8px;
+  transition: transform 900ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 220ms ease;
+}
+
+.ziki-workshop-mini-agent:nth-child(2) { background: #7357e8; transition-delay: 100ms; }
+.ziki-workshop-mini-agent:nth-child(3) { background: #148a65; transition-delay: 200ms; }
+
+.ziki-workshop-mini-agent strong { padding-bottom: 4px; letter-spacing: 0.04em; }
+
+.ziki-workshop-mini-face {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  display: flex;
+  width: 24px;
+  height: 16px;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border: 2px solid #8fc9ff;
+  border-radius: 7px;
+  background: #0b1733;
+}
+
+.ziki-workshop-mini-face b { width: 3px; height: 4px; border-radius: 50%; background: #73e6b1; }
+
+.ziki-workshop-mini-antenna {
+  position: absolute;
+  top: -5px;
+  left: 16px;
+  width: 2px;
+  height: 6px;
+  border-radius: 99px;
+  background: #8fc9ff;
+}
+
+.ziki-workshop-mini-antenna::before {
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ffb45e;
+  content: "";
+}
+
+.ziki-workshop[data-state="approaching"] .ziki-workshop-mini-agent:nth-child(1) { transform: translate(3px, -106px) rotate(-8deg); }
+.ziki-workshop[data-state="approaching"] .ziki-workshop-mini-agent:nth-child(2) { transform: translate(-15px, -91px) rotate(4deg); }
+.ziki-workshop[data-state="approaching"] .ziki-workshop-mini-agent:nth-child(3) { transform: translate(-35px, -72px) rotate(10deg); }
+
+.ziki-workshop[data-state="claimed"] .ziki-workshop-mini-agent:nth-child(1) { transform: translate(122px, -100px) rotate(5deg); }
+.ziki-workshop[data-state="claimed"] .ziki-workshop-mini-agent:nth-child(2) { transform: translate(104px, -76px) rotate(-5deg); }
+.ziki-workshop[data-state="claimed"] .ziki-workshop-mini-agent:nth-child(3) { transform: translate(82px, -55px) rotate(6deg); }
+
+.ziki-workshop[data-state="fixed"] .ziki-workshop-mini-agent:nth-child(1) { transform: translate(250px, -100px) rotate(7deg); }
+.ziki-workshop[data-state="fixed"] .ziki-workshop-mini-agent:nth-child(2) { transform: translate(228px, -72px) rotate(-6deg); }
+.ziki-workshop[data-state="fixed"] .ziki-workshop-mini-agent:nth-child(3) { transform: translate(203px, -48px) rotate(5deg); }
+
+.ziki-workshop[data-state="repairing"] .ziki-workshop-mini-agent,
+.ziki-workshop[data-state="error"] .ziki-workshop-mini-agent { opacity: 0.45; }
 
 .ziki-workshop-antenna {
   position: absolute;
@@ -447,34 +478,21 @@
   font-weight: 700;
 }
 
-.ziki-workshop-status button {
-  min-height: 30px;
-  padding: 5px 10px;
-  border: 1px solid rgba(115, 230, 177, 0.55);
-  border-radius: 999px;
-  background: rgba(20, 108, 67, 0.3);
-  color: #b9f5d9;
-  font: inherit;
-  cursor: pointer;
-}
-
-.ziki-workshop-status button:hover { background: rgba(20, 108, 67, 0.55); }
-.ziki-workshop-status button:focus-visible { outline: 2px solid white; outline-offset: 2px; }
-
 @media (max-width: 520px) {
   .ziki-workshop { min-height: 255px; }
   .ziki-workshop-sign { top: 14px; }
   .ziki-workshop-bench { top: 58px; right: 5%; left: 5%; }
   .ziki-workshop[data-state="repairing"] .ziki-workshop-bug { animation-duration: 1.2s; }
-  .ziki-workshop-station::after { display: none; }
   .ziki-workshop-bot,
   .ziki-workshop-tool { display: none; }
+  .ziki-workshop-agent-team { left: 7%; transform: scale(0.82); transform-origin: left bottom; }
   .ziki-workshop-status { right: 5%; bottom: 10px; left: 5%; justify-content: center; text-align: center; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .ziki-workshop-face i { transform: none; }
   .ziki-workshop[data-state="repairing"] .ziki-workshop-bug { left: 84%; transform: scale(0.82); }
+  .ziki-workshop-mini-agent { transition: none; }
 }
 
 .ziki-auth-g-btn {

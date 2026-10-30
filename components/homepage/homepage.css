@@ -311,89 +311,106 @@
 .ziki-homepage .section-kicker { color: var(--green); display: block; font-size: 12px; font-weight: 800; letter-spacing: .12em; margin-bottom: 16px; text-transform: uppercase; }
 .ziki-homepage .section-heading h2, .ziki-homepage .product-copy h2, .ziki-homepage .points-copy h2, .ziki-homepage .closing-cta h2 { font-size: clamp(37px, 4.4vw, 55px); font-weight: 700; letter-spacing: -3px; line-height: 1.08; }
 .ziki-homepage .section-heading p { color: var(--muted); font-size: 16px; line-height: 1.6; margin: 20px auto 0; max-width: 610px; }
-.ziki-homepage .workflow-carousel { background: #0b1733; border: 1px solid #263b63; border-radius: 28px; box-shadow: 0 30px 75px rgba(11,23,51,.14); color: #f5f7fc; overflow: hidden; }
-.ziki-homepage .workflow-carousel:focus-visible { outline: 3px solid #3978f6; outline-offset: 4px; }
-.ziki-homepage .workflow-stage { min-height: 500px; }
-.ziki-homepage .workflow-slide { animation: workflow-slide-in .45s cubic-bezier(.22,.8,.32,1) both; display: grid; grid-template-columns: .82fr 1.18fr; min-height: 500px; }
-.ziki-homepage .workflow-slide-copy { align-self: center; padding: 58px 18px 58px 62px; }
-.ziki-homepage .workflow-slide-meta { align-items: center; display: flex; flex-wrap: wrap; gap: 9px; }
-.ziki-homepage .workflow-slide-meta span { border: 1px solid #36517f; border-radius: 999px; color: #a9b9d7; font-size: 9px; font-weight: 700; padding: 7px 10px; }
-.ziki-homepage .workflow-slide-meta span:first-child { background: #3978f6; border-color: #3978f6; color: #fff; }
-.ziki-homepage .workflow-slide h3 { font-size: clamp(34px, 4vw, 52px); letter-spacing: -2.8px; line-height: 1.03; margin-top: 27px; max-width: 430px; }
-.ziki-homepage .workflow-slide-copy > p { color: #b3c0d8; font-size: 15px; line-height: 1.7; margin-top: 20px; max-width: 470px; }
-.ziki-homepage .workflow-outcome { align-items: flex-start; border-top: 1px solid #2b416b; display: flex; gap: 11px; margin-top: 30px; padding-top: 20px; }
-.ziki-homepage .workflow-outcome > span { align-items: center; background: #8fc9ff; border-radius: 50%; color: #0b1733; display: flex; flex: none; font-size: 10px; font-weight: 900; height: 23px; justify-content: center; width: 23px; }
-.ziki-homepage .workflow-outcome p { color: #d5def0; font-size: 12px; line-height: 1.55; max-width: 370px; }
-.ziki-homepage .workflow-controls { align-items: center; background: #081229; border-top: 1px solid #263b63; display: grid; gap: 24px; grid-template-columns: 150px 1fr 150px; padding: 17px 23px; }
-.ziki-homepage .workflow-arrow { align-items: center; background: transparent; border: 1px solid #36517f; color: #d9e4f7; cursor: pointer; display: flex; font: inherit; font-size: 11px; font-weight: 700; gap: 8px; justify-content: center; min-height: 42px; padding: 9px 14px; transition: background .2s ease, border-color .2s ease, color .2s ease; }
-.ziki-homepage .workflow-arrow:last-child { justify-self: end; }
-.ziki-homepage .workflow-arrow:hover:not(:disabled) { background: #172f5e; border-color: #5991ff; color: #fff; }
-.ziki-homepage .workflow-arrow:disabled { cursor: not-allowed; opacity: .35; }
-.ziki-homepage .workflow-progress { align-items: center; display: flex; gap: 7px; justify-content: center; }
-.ziki-homepage .workflow-progress button { align-items: center; background: transparent; border: 0; cursor: pointer; display: flex; height: 30px; justify-content: center; padding: 0; width: 30px; }
-.ziki-homepage .workflow-progress button::before { background: #3b4c6d; border-radius: 999px; content: ''; height: 5px; transition: background .25s ease, width .25s ease; width: 5px; }
-.ziki-homepage .workflow-progress button.active::before { background: #8fc9ff; width: 24px; }
-.ziki-homepage .workflow-progress button span { clip: rect(0 0 0 0); clip-path: inset(50%); height: 1px; overflow: hidden; position: absolute; white-space: nowrap; width: 1px; }
-
-.ziki-homepage .journey-scene { align-self: stretch; background: radial-gradient(circle at 48% 45%, rgba(57,120,246,.2), transparent 42%), linear-gradient(135deg, rgba(143,201,255,.03), rgba(57,120,246,.09)); display: flex; flex-direction: column; justify-content: center; min-height: 500px; overflow: hidden; padding: 48px 38px; position: relative; }
-.ziki-homepage .journey-scene::before { background-image: linear-gradient(rgba(143,201,255,.07) 1px, transparent 1px), linear-gradient(90deg, rgba(143,201,255,.07) 1px, transparent 1px); background-size: 32px 32px; content: ''; inset: 0; mask-image: radial-gradient(circle at center, black, transparent 78%); position: absolute; }
-.ziki-homepage .journey-scene > * { position: relative; z-index: 1; }
-.ziki-homepage .journey-scene figcaption { clip: rect(0 0 0 0); clip-path: inset(50%); height: 1px; overflow: hidden; position: absolute; white-space: nowrap; width: 1px; }
-.ziki-homepage .journey-scene-heading { align-items: center; color: #94a8ca; display: flex; font-size: 9px; gap: 9px; margin-bottom: 28px; }
-.ziki-homepage .journey-scene-heading > span { color: #dce8fb; font-weight: 800; }
-.ziki-homepage .journey-scene-heading > i { animation: live-pulse 2s ease-in-out infinite; background: #5dd39e; border-radius: 50%; height: 7px; width: 7px; }
-.ziki-homepage .journey-scene-heading > small { margin-left: auto; }
-.ziki-homepage .journey-track { align-items: stretch; display: grid; grid-template-columns: minmax(0,1fr) 32px minmax(0,1fr) 32px minmax(0,1fr); }
-.ziki-homepage .journey-segment { display: contents; }
-.ziki-homepage .journey-state { background: rgba(8,18,41,.78); border: 1px solid #345181; border-radius: 16px; display: flex; flex-direction: column; min-height: 185px; opacity: .3; padding: 18px 14px; position: relative; transform: scale(.97); }
-.ziki-homepage .journey-state-2 { background: #122a55; border-color: #4e7bd2; }
-.ziki-homepage .journey-state-3 { background: linear-gradient(145deg,#123657,#0f2947); border-color: #4b9c84; }
-.ziki-homepage .journey-state-icon { align-items: center; background: #203d72; border: 1px solid #4f78be; border-radius: 12px; color: #cfe4ff; display: flex; font-size: 13px; font-weight: 900; height: 38px; justify-content: center; margin-bottom: 24px; width: 38px; }
-.ziki-homepage .journey-state-2 .journey-state-icon { background: #3978f6; border-color: #73a2ff; color: #fff; }
-.ziki-homepage .journey-state-3 .journey-state-icon { background: #dff9ec; border-color: #7ad9b1; color: #187a53; }
-.ziki-homepage .journey-state > span { color: #8298bd; font-size: 8px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
-.ziki-homepage .journey-state strong { color: #f5f7fc; font-size: 13px; line-height: 1.25; margin-top: 7px; }
-.ziki-homepage .journey-state small { color: #94a8ca; font-size: 9px; line-height: 1.5; margin-top: 7px; }
-.ziki-homepage .journey-handoff { align-items: center; display: flex; height: 185px; justify-content: center; opacity: .18; position: relative; transform: scale(.72); width: 32px; }
-.ziki-homepage .journey-handoff > span { background: #45699f; height: 1px; left: 0; position: absolute; right: 0; }
-.ziki-homepage .journey-handoff > span::after { border-right: 1px solid #6f96cf; border-top: 1px solid #6f96cf; content: ''; height: 5px; position: absolute; right: 1px; top: -2px; transform: rotate(45deg); width: 5px; }
-.ziki-homepage .journey-agent { background: #f7fbff; border: 2px solid #5991ff; border-radius: 7px; box-shadow: 0 0 0 5px #102449; height: 25px; position: relative; width: 29px; z-index: 2; }
-.ziki-homepage .journey-agent::before { background: #8fc9ff; content: ''; height: 6px; left: 12px; position: absolute; top: -8px; width: 2px; }
-.ziki-homepage .journey-agent::after { background: #8fc9ff; border-radius: 50%; content: ''; height: 5px; left: 10.5px; position: absolute; top: -11px; width: 5px; }
-.ziki-homepage .journey-agent b { background: #0b1733; border-radius: 50%; height: 3px; position: absolute; top: 9px; width: 3px; }
-.ziki-homepage .journey-agent b:first-child { left: 7px; }
-.ziki-homepage .journey-agent b:last-child { right: 7px; }
-.ziki-homepage .journey-packet { background: #8fc9ff; border: 4px solid #102449; border-radius: 50%; height: 17px; width: 17px; z-index: 2; }
-.ziki-homepage .journey-scene.is-idle .journey-state-1 { opacity: 1; transform: none; }
-.ziki-homepage .journey-scene.is-running .journey-state-1 { animation: journey-reveal .55s ease-out both; }
-.ziki-homepage .journey-scene.is-running .journey-segment:nth-child(1) .journey-handoff { animation: journey-handoff .55s .75s ease-out both; }
-.ziki-homepage .journey-scene.is-running .journey-state-2 { animation: journey-reveal .6s 1.35s ease-out both; }
-.ziki-homepage .journey-scene.is-running .journey-segment:nth-child(2) .journey-handoff { animation: journey-handoff .55s 2.25s ease-out both; }
-.ziki-homepage .journey-scene.is-running .journey-state-3 { animation: journey-reveal .65s 3s ease-out both; }
-.ziki-homepage .journey-scene.is-complete .journey-state,
-.ziki-homepage .journey-scene.is-complete .journey-handoff,
-.ziki-homepage .journey-scene.is-acted .journey-state,
-.ziki-homepage .journey-scene.is-acted .journey-handoff { opacity: 1; transform: none; }
-.ziki-homepage .journey-scene.is-acted .journey-state-3 { animation: journey-confirm .65s ease-out both; }
-.ziki-homepage .journey-ledger { align-items: center; color: #7690b8; display: grid; font-size: 8px; gap: 8px; grid-template-columns: auto 1fr auto 1fr auto; margin-top: 24px; }
-.ziki-homepage .journey-ledger > i { border-top: 1px dashed #36517f; }
-.ziki-homepage .journey-ledger > span:last-of-type { color: #74d6ad; }
-.ziki-homepage .journey-ledger > small { color: #8da1c3; grid-column: 1 / -1; margin-top: 4px; text-align: right; }
-.ziki-homepage .journey-actions { align-items: center; border-top: 1px solid #2b416b; display: flex; gap: 18px; justify-content: space-between; margin-top: 18px; padding-top: 16px; }
-.ziki-homepage .journey-status { align-items: center; color: #aebddd; display: flex; font-size: 9px; gap: 8px; line-height: 1.4; }
-.ziki-homepage .journey-status > i { background: #7389ae; border-radius: 50%; flex: none; height: 7px; width: 7px; }
-.ziki-homepage .is-running .journey-status > i { animation: live-pulse 1.2s ease-in-out infinite; background: #8fc9ff; }
-.ziki-homepage .is-complete .journey-status > i,
-.ziki-homepage .is-acted .journey-status > i { background: #5dd39e; }
-.ziki-homepage .journey-buttons { display: flex; flex: none; gap: 8px; }
-.ziki-homepage .journey-buttons button { border-radius: 9px; cursor: pointer; font: inherit; font-size: 9px; font-weight: 800; min-height: 38px; padding: 9px 12px; transition: background .2s ease, border-color .2s ease, transform .2s ease; }
-.ziki-homepage .journey-buttons button:focus-visible { outline: 3px solid #8fc9ff; outline-offset: 2px; }
-.ziki-homepage .journey-buttons button:hover:not(:disabled) { transform: translateY(-1px); }
-.ziki-homepage .journey-replay { background: transparent; border: 1px solid #3a5685; color: #b7c6df; }
-.ziki-homepage .journey-replay:hover { background: #15294d; border-color: #5b83c3; }
-.ziki-homepage .journey-action { background: #3978f6; border: 1px solid #5991ff; color: #fff; }
-.ziki-homepage .journey-action:hover:not(:disabled) { background: #4b87ff; }
-.ziki-homepage .journey-action:disabled { background: #174d43; border-color: #3c9878; color: #c9f6e2; cursor: default; }
+.ziki-homepage .mission-control { background: #0b1733; border: 1px solid #263b63; border-radius: 28px; box-shadow: 0 30px 75px rgba(11,23,51,.16); color: #f5f7fc; overflow: hidden; }
+.ziki-homepage .mission-topbar { align-items: center; background: #081229; border-bottom: 1px solid #263b63; display: flex; gap: 24px; justify-content: space-between; padding: 18px 22px; }
+.ziki-homepage .mission-topbar > div:first-child { display: flex; flex-direction: column; gap: 4px; }
+.ziki-homepage .mission-topbar strong { font-size: 16px; }
+.ziki-homepage .mission-live { align-items: center; color: #94a8ca; display: flex; font-size: 9px; font-weight: 700; gap: 7px; }
+.ziki-homepage .mission-live i { animation: live-pulse 1.4s ease-in-out infinite; background: #5dd39e; border-radius: 50%; height: 7px; width: 7px; }
+.ziki-homepage .mission-top-actions { align-items: center; display: flex; gap: 14px; }
+.ziki-homepage .mission-top-actions > span { color: #aebddd; font-size: 10px; }
+.ziki-homepage .mission-top-actions button { background: transparent; border: 1px solid #36517f; border-radius: 999px; color: #d9e4f7; cursor: pointer; font: inherit; font-size: 9px; font-weight: 800; min-height: 36px; padding: 8px 13px; }
+.ziki-homepage .mission-top-actions button:hover { background: #172f5e; border-color: #5991ff; }
+.ziki-homepage .mission-top-actions button:focus-visible, .ziki-homepage .mission-station-select:focus-visible, .ziki-homepage .mission-control button:focus-visible, .ziki-homepage .mission-control a:focus-visible { outline: 3px solid #8fc9ff; outline-offset: 2px; }
+.ziki-homepage .mission-board { background: radial-gradient(circle at 48% 40%,rgba(57,120,246,.22),transparent 35%), linear-gradient(145deg,#0d1c3a,#0b1733); padding: 36px 25px 22px; position: relative; }
+.ziki-homepage .mission-board::before { background-image: linear-gradient(rgba(143,201,255,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(143,201,255,.055) 1px,transparent 1px); background-size: 28px 28px; content: ''; inset: 0; mask-image: linear-gradient(to bottom,black,transparent 88%); pointer-events: none; position: absolute; }
+.ziki-homepage .mission-route { background: #263b63; height: 3px; left: 8.333%; position: absolute; right: 8.333%; top: 176px; }
+.ziki-homepage .mission-route span { background: linear-gradient(90deg,#5991ff,#8fc9ff,#5dd39e); box-shadow: 0 0 16px rgba(143,201,255,.65); display: block; height: 100%; transition: width .7s cubic-bezier(.22,.8,.32,1); }
+.ziki-homepage .mission-stations { display: grid; grid-template-columns: repeat(6,minmax(0,1fr)); list-style: none; position: relative; }
+.ziki-homepage .mission-station { display: flex; flex-direction: column; min-width: 0; opacity: .46; padding: 0 7px; transition: opacity .35s ease, transform .35s ease; }
+.ziki-homepage .mission-station.is-reached { opacity: 1; }
+.ziki-homepage .mission-station.is-active { transform: translateY(-4px); }
+.ziki-homepage .mission-station.is-faded { opacity: .18; }
+.ziki-homepage .mission-station-select { background: transparent; border: 0; color: inherit; cursor: pointer; display: flex; flex-direction: column; font: inherit; min-height: 88px; padding: 0 2px 10px; text-align: left; }
+.ziki-homepage .mission-station-select > span { align-items: center; background: #152b54; border: 1px solid #36517f; border-radius: 50%; color: #91a6c8; display: flex; font-size: 9px; font-weight: 900; height: 25px; justify-content: center; margin-bottom: 9px; width: 25px; }
+.ziki-homepage .is-reached .mission-station-select > span { background: #3978f6; border-color: #73a2ff; color: #fff; }
+.ziki-homepage .is-complete .mission-station:last-child .mission-station-select > span { background: #187a53; border-color: #74d6ad; }
+.ziki-homepage .mission-station-select small { color: #8298bd; font-size: 7px; font-weight: 800; line-height: 1.3; min-height: 18px; }
+.ziki-homepage .mission-station-select strong { font-size: 11px; line-height: 1.2; margin-top: 3px; }
+.ziki-homepage .mission-work-area { background: rgba(8,18,41,.86); border: 1px solid #304b79; border-radius: 16px; height: 150px; overflow: hidden; position: relative; }
+.ziki-homepage .is-active .mission-work-area { border-color: #8fc9ff; box-shadow: 0 0 0 2px rgba(143,201,255,.12),0 15px 35px rgba(0,0,0,.25); }
+.ziki-homepage .mission-station > p { color: #91a4c4; font-size: 8px; line-height: 1.45; margin-top: 11px; }
+.ziki-homepage .mission-agent-pair { bottom: 12px; display: flex; gap: 5px; left: 10px; position: absolute; }
+.ziki-homepage .mission-agent { align-items: center; display: flex; flex-direction: column; gap: 3px; }
+.ziki-homepage .mission-agent > i, .ziki-homepage .mission-role-avatar > i { background: #eaf3ff; border: 2px solid #5991ff; border-radius: 7px; display: block; height: 25px; position: relative; width: 28px; }
+.ziki-homepage .mission-agent > i::before, .ziki-homepage .mission-role-avatar > i::before { background: #8fc9ff; border-radius: 4px 4px 0 0; content: ''; height: 6px; left: 11px; position: absolute; top: -7px; width: 2px; }
+.ziki-homepage .mission-agent > i b, .ziki-homepage .mission-role-avatar > i b { background: #0b1733; border-radius: 50%; height: 3px; position: absolute; top: 9px; width: 3px; }
+.ziki-homepage .mission-agent > i b:first-child, .ziki-homepage .mission-role-avatar > i b:first-child { left: 6px; }
+.ziki-homepage .mission-agent > i b:last-child, .ziki-homepage .mission-role-avatar > i b:last-child { right: 6px; }
+.ziki-homepage .mission-agent small { color: #9eb0ce; font-size: 6px; font-weight: 900; }
+.ziki-homepage .idea-capsule { align-items: center; animation: capsule-arrive .7s cubic-bezier(.22,.8,.32,1) both, capsule-glow 1.8s .7s ease-in-out infinite; background: #f6d96b; border: 2px solid #fff4bd; border-radius: 999px; box-shadow: 0 0 24px rgba(246,217,107,.7); color: #5f4800; display: flex; height: 30px; justify-content: center; position: absolute; right: 9px; top: 10px; width: 22px; z-index: 3; }
+.ziki-homepage .idea-capsule i { font-size: 9px; font-style: normal; }
+@keyframes capsule-arrive { from { opacity: 0; transform: translateX(-28px) rotate(-20deg); } to { opacity: 1; transform: none; } }
+@keyframes capsule-glow { 50% { box-shadow: 0 0 34px rgba(246,217,107,.95); transform: translateY(-2px); } }
+.ziki-homepage .mission-guide { background: #162d58; border: 1px solid #4169a6; border-radius: 6px; height: 57px; left: 50%; padding: 9px; position: absolute; top: 22px; transform: translateX(-50%) rotate(-3deg); width: 66px; }
+.ziki-homepage .mission-guide i { background: #7296ce; display: block; height: 2px; margin-bottom: 6px; width: 75%; }
+.ziki-homepage .mission-guide span { color: #dbe9ff; font-size: 7px; font-weight: 900; }
+.ziki-homepage .mission-telescope { left: 50%; position: absolute; top: 25px; transform: translateX(-50%); }
+.ziki-homepage .mission-telescope i { background: #8fc9ff; border: 3px solid #315b9b; border-radius: 8px 14px 14px 8px; display: block; height: 18px; transform: rotate(-20deg); width: 53px; }
+.ziki-homepage .mission-telescope span { background: #6b87b3; display: block; height: 36px; margin: -1px auto 0; transform: rotate(8deg); width: 3px; }
+.ziki-homepage .mission-telescope b { border-bottom: 2px solid #6b87b3; display: block; margin-left: -11px; width: 28px; }
+.ziki-homepage .is-active .mission-telescope i { animation: telescope-scan 1.8s ease-in-out infinite alternate; }
+@keyframes telescope-scan { to { transform: rotate(8deg); } }
+.ziki-homepage .mission-scanner { background: #10254a; border: 1px solid #3b6098; border-radius: 8px; height: 58px; left: 50%; overflow: hidden; position: absolute; top: 20px; transform: translateX(-50%); width: 72px; }
+.ziki-homepage .mission-scanner i { background: linear-gradient(90deg,transparent,#5dd39e,transparent); height: 2px; left: 0; position: absolute; right: 0; top: 10px; }
+.ziki-homepage .is-active .mission-scanner i { animation: scanner-pass 1.5s ease-in-out infinite; }
+@keyframes scanner-pass { 50% { top: 46px; } }
+.ziki-homepage .mission-scanner span { color: #b9c9e3; font-size: 7px; left: 11px; position: absolute; top: 25px; }
+.ziki-homepage .mission-scanner b { border: 1px solid #5dd39e; border-radius: 50%; height: 10px; position: absolute; right: 10px; top: 23px; width: 10px; }
+.ziki-homepage .mission-bids { align-items: center; display: flex; gap: 3px; justify-content: center; left: 8px; position: absolute; right: 8px; top: 25px; }
+.ziki-homepage .mission-bids i { background: #193665; border: 1px solid #4b6faa; border-radius: 5px; height: 35px; transform: translateY(7px); width: 25px; }
+.ziki-homepage .mission-bids i:nth-child(2) { background: #204b76; border-color: #5dd39e; transform: translateY(0); }
+.ziki-homepage .mission-bids span { background: #187a53; border-radius: 999px; color: #dff9ec; font-size: 6px; padding: 3px 5px; position: absolute; top: 40px; }
+.ziki-homepage .mission-tools { left: 50%; position: absolute; text-align: center; top: 18px; transform: translateX(-50%); width: 85px; }
+.ziki-homepage .mission-tools i { color: #f6d96b; font-size: 26px; font-style: normal; }
+.ziki-homepage .mission-tools span { align-items: center; background: #187a53; border-radius: 50%; color: #fff; display: flex; font-size: 8px; height: 18px; justify-content: center; position: absolute; right: 9px; top: 3px; width: 18px; }
+.ziki-homepage .mission-tools b { background: #152e55; border: 1px solid #3d6098; border-radius: 5px; color: #b9c9e3; display: block; font-size: 7px; margin-top: 3px; padding: 4px; }
+.ziki-homepage .is-active .mission-tools i { animation: tool-turn .8s ease-in-out infinite alternate; display: inline-block; }
+@keyframes tool-turn { to { transform: rotate(18deg); } }
+.ziki-homepage .mission-launch { left: 50%; position: absolute; top: 15px; transform: translateX(-50%); }
+.ziki-homepage .mission-launch i { border-bottom: 15px solid #3978f6; border-left: 9px solid transparent; border-right: 9px solid transparent; display: block; height: 0; margin: 0 auto -1px; width: 19px; }
+.ziki-homepage .mission-launch span { align-items: center; background: #eaf3ff; border-radius: 4px; color: #173560; display: flex; font-size: 7px; font-weight: 900; height: 29px; justify-content: center; width: 37px; }
+.ziki-homepage .mission-launch b { background: #5dd39e; border-radius: 50%; color: #0b3b2d; font-size: 7px; padding: 3px 5px; position: absolute; right: -8px; top: 25px; }
+.ziki-homepage .is-active .mission-launch { animation: launch-ready 1.2s ease-in-out infinite alternate; }
+@keyframes launch-ready { to { transform: translate(-50%,-5px); } }
+.ziki-homepage .mission-announcement { border-top: 1px solid #263b63; color: #aebddd; font-size: 10px; line-height: 1.5; margin-top: 24px; padding-top: 15px; position: relative; }
+.ziki-homepage .mission-crew-entry { align-items: center; background: #081229; border-top: 1px solid #263b63; display: flex; justify-content: center; min-height: 68px; padding: 12px 20px; }
+.ziki-homepage .mission-crew-entry p { color: #8298bd; font-size: 10px; }
+.ziki-homepage .mission-meet-button { background: #3978f6; border: 1px solid #73a2ff; border-radius: 999px; color: #fff; cursor: pointer; font: inherit; font-size: 11px; font-weight: 800; min-height: 42px; padding: 10px 20px; }
+.ziki-homepage .mission-crew { background: #0e1d3a; border-top: 1px solid #263b63; padding: 28px; }
+.ziki-homepage .mission-crew-heading { align-items: end; display: flex; gap: 24px; justify-content: space-between; }
+.ziki-homepage .mission-crew-heading span { color: #8fc9ff; font-size: 8px; font-weight: 800; }
+.ziki-homepage .mission-crew-heading h3 { font-size: 25px; letter-spacing: -1px; margin-top: 3px; }
+.ziki-homepage .mission-crew-heading > p { color: #94a8ca; font-size: 10px; }
+.ziki-homepage .mission-crew-layout { display: grid; gap: 24px; grid-template-columns: .9fr 1.1fr; margin-top: 22px; }
+.ziki-homepage .mission-role-tabs { display: flex; flex-wrap: wrap; gap: 7px; }
+.ziki-homepage .mission-role-tabs button { background: #111f3d; border: 1px solid #304a78; border-radius: 999px; color: #b9c9e3; cursor: pointer; font: inherit; font-size: 9px; font-weight: 800; min-height: 38px; padding: 8px 12px; }
+.ziki-homepage .mission-role-tabs button[aria-selected='true'] { background: #dff1ff; border-color: #8fc9ff; color: #173560; }
+.ziki-homepage .mission-role-card { align-items: flex-start; background: #081229; border: 1px solid #304a78; border-radius: 16px; display: flex; gap: 16px; padding: 18px; }
+.ziki-homepage .mission-role-avatar { align-items: center; background: #172f5e; border-radius: 14px; display: flex; flex: none; height: 52px; justify-content: center; width: 52px; }
+.ziki-homepage .mission-role-avatar > i { transform: scale(1.2); }
+.ziki-homepage .mission-role-card h4 { font-size: 16px; }
+.ziki-homepage .mission-role-card p { color: #aebddd; font-size: 10px; line-height: 1.55; margin-top: 7px; }
+.ziki-homepage .mission-role-card p strong { color: #e5edfa; }
+.ziki-homepage .mission-actions { align-items: center; background: #f2f7ff; color: #17233c; display: grid; gap: 18px 25px; grid-template-columns: minmax(190px,.65fr) 1.35fr; padding: 25px 28px; }
+.ziki-homepage .mission-actions > div:first-child > strong { font-size: 13px; }
+.ziki-homepage .mission-actions > div:first-child > p { color: #68748a; font-size: 9px; line-height: 1.5; margin-top: 4px; }
+.ziki-homepage .mission-action-buttons { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+.ziki-homepage .mission-action-buttons button, .ziki-homepage .mission-action-buttons a { align-items: center; border-radius: 999px; cursor: pointer; display: inline-flex; font: inherit; font-size: 9px; font-weight: 800; justify-content: center; min-height: 40px; padding: 9px 14px; text-decoration: none; }
+.ziki-homepage .mission-copy-button { background: #fff; border: 1px solid #c9d6e9; color: #244069; }
+.ziki-homepage .mission-connect-button { background: #3978f6; border: 1px solid #3978f6; color: #fff; }
+.ziki-homepage .mission-dashboard-link { background: transparent; border: 1px solid transparent; color: #244069; }
+.ziki-homepage .mission-copy-error { color: #9f1d32; font-size: 9px; grid-column: 1 / -1; text-align: right; }
 
 .ziki-homepage .product-section { align-items: center; background: linear-gradient(145deg, #f7f9fd, #f0f5ff); border: 1px solid var(--line); border-radius: 28px; display: grid; gap: 56px; grid-template-columns: .72fr 1.28fr; margin-bottom: 70px; padding: 72px 54px; }
 .ziki-homepage .product-copy h2 { font-size: clamp(36px, 4vw, 51px); font-weight: 700; letter-spacing: -3px; line-height: 1.08; }
@@ -567,6 +584,9 @@
   .ziki-homepage .hero-title-word { letter-spacing: -7px; }
   .ziki-homepage .workflow-slide { grid-template-columns: .92fr 1.08fr; }
   .ziki-homepage .workflow-slide-copy { padding-left: 42px; }
+  .ziki-homepage .mission-stations { grid-template-columns: repeat(3,minmax(0,1fr)); row-gap: 26px; }
+  .ziki-homepage .mission-route { display: none; }
+  .ziki-homepage .mission-station > p { min-height: 35px; }
   .ziki-homepage .product-section { gap: 40px; padding-left: 38px; padding-right: 38px; }
   .ziki-homepage .developer-section { gap: 45px; }
   .ziki-homepage .points-card { gap: 45px; padding: 55px 40px; }
@@ -618,6 +638,21 @@
   .ziki-homepage .ziki-intro { gap: 32px; grid-template-columns: 1fr; }
   .ziki-homepage .section-heading h2, .ziki-homepage .product-copy h2, .ziki-homepage .points-copy h2, .ziki-homepage .closing-cta h2 { letter-spacing: -2.2px; }
   .ziki-homepage .workflow-carousel { border-radius: 20px; }
+  .ziki-homepage .mission-topbar { align-items: flex-start; flex-direction: column; padding: 17px; }
+  .ziki-homepage .mission-top-actions { align-items: flex-start; justify-content: space-between; width: 100%; }
+  .ziki-homepage .mission-top-actions > span { max-width: 55%; }
+  .ziki-homepage .mission-board { padding: 26px 16px 20px; }
+  .ziki-homepage .mission-stations { gap: 14px; grid-template-columns: 1fr; }
+  .ziki-homepage .mission-station { display: grid; gap: 11px; grid-template-columns: minmax(110px,.8fr) minmax(130px,1.2fr); padding: 0; }
+  .ziki-homepage .mission-station.is-active { transform: none; }
+  .ziki-homepage .mission-station-select { justify-content: center; min-height: 0; padding: 12px; }
+  .ziki-homepage .mission-work-area { height: 125px; }
+  .ziki-homepage .mission-station > p { grid-column: 1 / -1; margin: -4px 4px 4px; min-height: 0; }
+  .ziki-homepage .mission-crew { padding: 23px 17px; }
+  .ziki-homepage .mission-crew-heading { align-items: flex-start; flex-direction: column; gap: 7px; }
+  .ziki-homepage .mission-crew-layout { grid-template-columns: 1fr; }
+  .ziki-homepage .mission-actions { grid-template-columns: 1fr; padding: 23px 17px; }
+  .ziki-homepage .mission-action-buttons { justify-content: flex-start; }
   .ziki-homepage .workflow-stage, .ziki-homepage .workflow-slide { min-height: 0; }
   .ziki-homepage .workflow-slide { grid-template-columns: 1fr; }
   .ziki-homepage .workflow-slide-copy { padding: 43px 27px 32px; }
@@ -667,6 +702,13 @@
   .ziki-homepage .product-section { padding-left: 14px; padding-right: 14px; }
   .ziki-homepage .workflow-slide h3 { font-size: 34px; }
   .ziki-homepage .workflow-slide-meta span { font-size: 8px; }
+  .ziki-homepage .mission-top-actions { flex-direction: column; }
+  .ziki-homepage .mission-top-actions > span { max-width: none; }
+  .ziki-homepage .mission-station { grid-template-columns: 1fr; }
+  .ziki-homepage .mission-station-select { min-height: 82px; }
+  .ziki-homepage .mission-work-area { height: 138px; }
+  .ziki-homepage .mission-action-buttons { display: grid; grid-template-columns: 1fr; width: 100%; }
+  .ziki-homepage .mission-action-buttons button, .ziki-homepage .mission-action-buttons a { min-height: 44px; }
   .ziki-homepage .journey-scene { padding: 32px 20px; }
   .ziki-homepage .journey-scene-heading > small { display: none; }
   .ziki-homepage .journey-status { min-height: 28px; }
@@ -689,6 +731,14 @@
   .ziki-homepage .journey-state,
   .ziki-homepage .journey-handoff,
   .ziki-homepage .journey-status > i { animation: none !important; }
+  .ziki-homepage .mission-live i,
+  .ziki-homepage .idea-capsule,
+  .ziki-homepage .mission-telescope i,
+  .ziki-homepage .mission-scanner i,
+  .ziki-homepage .mission-tools i,
+  .ziki-homepage .mission-launch { animation: none !important; }
+  .ziki-homepage .mission-route span,
+  .ziki-homepage .mission-station { transition: none !important; }
   .ziki-homepage .journey-state,
   .ziki-homepage .journey-handoff { opacity: 1; transform: none; }
 }

@@ -1,63 +1,77 @@
 // @vitest-environment jsdom
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import "@testing-library/jest-dom/vitest";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { WorkflowCarousel } from "./workflow-carousel";
+import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { WorkflowCarousel, ZIKI_SETUP_PROMPT } from "./workflow-carousel";
 
-afterEach(() => cleanup());
+beforeEach(() => {
+  vi.stubGlobal("matchMedia", vi.fn(() => ({ matches: false })));
+});
 
-describe("WorkflowCarousel", () => {
-  it("moves through all six workflow steps with the carousel controls", () => {
+afterEach(() => {
+  cleanup();
+  vi.restoreAllMocks();
+  vi.unstubAllGlobals();
+  vi.useRealTimers();
+});
+
+describe("The Ziki Mission", () => {
+  it("shows six practical work areas and begins with the guide", () => {
     render(<WorkflowCarousel />);
 
-    const previous = screen.getByRole("button", { name: "Previous workflow step" });
-    const next = screen.getByRole("button", { name: "Next workflow step" });
-
-    expect(screen.getByRole("group", { name: "1 of 6: Report an idea or bug" })).toBeInTheDocument();
-    expect(previous).toBeDisabled();
-    expect(next).toBeEnabled();
-
-    fireEvent.click(next);
-    expect(screen.getByRole("group", { name: "2 of 6: Verify that it is real" })).toBeInTheDocument();
-    expect(previous).toBeEnabled();
-
-    fireEvent.click(screen.getByRole("tab", { name: "Show step 6: Approve and safely merge" }));
-    expect(screen.getByRole("group", { name: "6 of 6: Approve and safely merge" })).toBeInTheDocument();
-    expect(next).toBeDisabled();
+    expect(screen.getByText("The Ziki Mission")).toBeInTheDocument();
+    expect(screen.getByLabelText("An idea moving through the Ziki software mission")).toBeInTheDocument();
+    expect(screen.getAllByRole("button", { name: /Show mission step/ })).toHaveLength(6);
+    expect(screen.getByRole("button", { name: "Show mission step 1: Prepare the crew" })).toHaveAttribute("aria-current", "step");
+    expect(screen.getByText(/The Observer spots activity/)).toBeInTheDocument();
+    expect(screen.getByText(/The Merger checks quality and safety/)).toBeInTheDocument();
   });
 
-  it("supports keyboard navigation and identifies the active step", () => {
+  it("moves the idea through the mission automatically", async () => {
+    vi.useFakeTimers();
     render(<WorkflowCarousel />);
 
-    const stepPicker = screen.getByRole("tablist", { name: "Choose a workflow step" });
-    fireEvent.keyDown(stepPicker, { key: "End" });
-    expect(screen.getByRole("tab", { name: "Show step 6: Approve and safely merge" })).toHaveAttribute("aria-current", "step");
+    await act(async () => { vi.runOnlyPendingTimers(); });
+    await act(async () => { vi.advanceTimersByTime(2200); });
+    expect(screen.getByRole("button", { name: "Show mission step 2: Discover and report" })).toHaveAttribute("aria-current", "step");
 
-    fireEvent.keyDown(stepPicker, { key: "ArrowLeft" });
-    expect(screen.getByRole("group", { name: "5 of 6: Build, link, and test" })).toBeInTheDocument();
-
-    fireEvent.keyDown(stepPicker, { key: "Home" });
-    expect(screen.getByRole("group", { name: "1 of 6: Report an idea or bug" })).toBeInTheDocument();
+    for (let step = 0; step < 5; step += 1) {
+      await act(async () => { vi.advanceTimersByTime(2600); });
+    }
+    expect(screen.getByRole("button", { name: "Meet the agent crew" })).toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveTextContent("Step 6 of 6");
   });
 
-  it("shows each step as a start, Ziki action, and result journey", () => {
+  it("explains what each specialist can and cannot do", () => {
     render(<WorkflowCarousel />);
+    fireEvent.click(screen.getByRole("button", { name: "Show mission step 6: Approve and launch" }));
+    fireEvent.click(screen.getByRole("button", { name: "Meet the agent crew" }));
+    fireEvent.click(screen.getByRole("tab", { name: "Triager" }));
 
-    expect(screen.getByLabelText("An idea becoming a tracked Ziki issue")).toBeInTheDocument();
-    expect(screen.getByText("Idea or bug")).toBeInTheDocument();
-    expect(screen.getByText("Create report")).toBeInTheDocument();
-    expect(screen.getByText("Issue created")).toBeInTheDocument();
+    expect(screen.getByRole("tabpanel")).toHaveTextContent("I check whether an idea already exists");
+    expect(screen.getByRole("tabpanel")).toHaveTextContent("I cannot accept the work or approve my owner’s report");
   });
 
-  it("lets a person complete and replay the action for the visible step", () => {
+  it("copies the setup prompt and continues into the existing connection flow", async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText } });
     render(<WorkflowCarousel />);
 
-    fireEvent.click(screen.getByRole("button", { name: "Submit report" }));
-    expect(screen.getByRole("status")).toHaveTextContent("Report submitted");
-    expect(screen.getByRole("button", { name: "Report submitted ✓" })).toBeDisabled();
+    fireEvent.click(screen.getByRole("button", { name: "Copy setup prompt" }));
+    await act(async () => undefined);
 
-    fireEvent.click(screen.getByRole("button", { name: "Replay" }));
-    expect(screen.getByRole("status")).toHaveTextContent("Simulating: Create report");
-    expect(screen.getByRole("button", { name: "Submit report" })).toBeEnabled();
+    expect(writeText).toHaveBeenCalledWith(ZIKI_SETUP_PROMPT);
+    expect(screen.getByRole("button", { name: "Setup prompt copied" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Connect my first agent" })).toHaveAttribute(
+      "href",
+      "/login?callbackUrl=%2Fsettings%2Fagents%2Fconnect",
+    );
+  });
+
+  it("links signed-in people directly to agent connection and the dashboard", () => {
+    render(<WorkflowCarousel signedIn />);
+
+    expect(screen.getByRole("link", { name: "Connect my first agent" })).toHaveAttribute("href", "/settings/agents/connect");
+    expect(screen.getByRole("link", { name: "Continue to dashboard" })).toHaveAttribute("href", "/dashboard");
   });
 });

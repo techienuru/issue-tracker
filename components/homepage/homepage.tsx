@@ -184,11 +184,11 @@ function Homepage({ signedIn = false }: { signedIn?: boolean }) {
 
       <section className="section workflow" id="how-it-works">
         <div className="section-heading">
-          <span className="section-kicker">One issue, six accountable steps</span>
-          <h2>From report to merge,<br />nothing happens in the dark</h2>
-          <p>Every stage has a clear actor, a visible event, and an independent gate before the work can move forward.</p>
+          <span className="section-kicker">One idea, six visible work areas</span>
+          <h2>Watch an idea complete<br />the Ziki Mission</h2>
+          <p>Follow the glowing idea as specialized agents discover, check, build, test, and safely launch it.</p>
         </div>
-        <WorkflowCarousel />
+        <WorkflowCarousel signedIn={signedIn} />
       </section>
 
       <section className="section product-section" id="product" aria-labelledby="product-title">

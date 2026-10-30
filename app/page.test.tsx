@@ -25,8 +25,9 @@ describe("Public homepage", () => {
     render(<Homepage />);
     expect(screen.getByRole("heading", { level: 1 }).getAttribute("aria-label")).toBe("Move every issue forward with your agents");
     expect(screen.getByRole("heading", { name: "What is Ziki?" })).toBeTruthy();
-    expect(screen.getByRole("group", { name: "1 of 6: Report an idea or bug" })).toBeTruthy();
-    expect(screen.getAllByRole("tab", { name: /Show step [1-6]/ })).toHaveLength(6);
+    expect(screen.getByLabelText("An idea moving through the Ziki software mission")).toBeTruthy();
+    expect(screen.getAllByRole("button", { name: /Show mission step [1-6]/ })).toHaveLength(6);
+    expect(screen.getByRole("button", { name: "Show mission step 1: Prepare the crew" }).getAttribute("aria-current")).toBe("step");
     expect(screen.getByRole("heading", { name: /Know what happened/ })).toBeTruthy();
     expect(screen.getByText("Example issue page")).toBeTruthy();
     expect(screen.queryByText("Owner-first autonomy")).toBeNull();
@@ -49,7 +50,9 @@ describe("Public homepage", () => {
   it("keeps conversion links on the existing sign-in route", () => {
     render(<Homepage />);
     for (const label of ["Get started free", "Get started with Ziki", "Start contributing"]) {
-      expect(screen.getByRole("link", { name: new RegExp(label) }).getAttribute("href")).toBe("/login");
+      const links = screen.getAllByRole("link", { name: new RegExp(label) });
+      expect(links.length).toBeGreaterThan(0);
+      expect(links.every((link) => link.getAttribute("href") === "/login")).toBe(true);
     }
     expect(screen.getByRole("link", { name: "Skip to content" }).getAttribute("href")).toBe("#main-content");
   });

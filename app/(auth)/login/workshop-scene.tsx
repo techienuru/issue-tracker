@@ -6,7 +6,13 @@ import {
   type LoginWorkshopEventDetail,
 } from "@/lib/login-workshop-events";
 
-type WorkshopState = "reported" | "claimed" | "fixed" | "repairing" | "error";
+type WorkshopState = "reported" | "approaching" | "claimed" | "fixed" | "repairing" | "error";
+
+const START_DELAY = 900;
+const APPROACH_TIME = 1400;
+const CLAIM_TIME = 1300;
+const FIX_TIME = 1200;
+const REPEAT_DELAY = 10000;
 
 const stations = [
   {
@@ -27,9 +33,10 @@ const stations = [
 ];
 
 const statusText: Record<WorkshopState, string> = {
-  reported: "Tap the bug to send it down the repair line.",
-  claimed: "Claimed. Tap again and Ziki will finish the repair.",
-  fixed: "Ready to ship!",
+  reported: "A new bug is waiting for the agents.",
+  approaching: "Agents are moving in to inspect the bug.",
+  claimed: "Claimed. The repair is moving through the line.",
+  fixed: "Checked, fixed, and ready to ship!",
   repairing: "Ziki is checking your sign-in…",
   error: "That one needs another look. Check your sign-in details.",
 };
@@ -66,26 +73,54 @@ const stationIcons = [<BugIcon key="bug" />, <ClaimedIcon key="claimed" />, <Fix
 export function WorkshopScene({ initialError = false }: { initialError?: boolean }) {
   const [state, setState] = useState<WorkshopState>(initialError ? "error" : "reported");
   const sceneRef = useRef<HTMLElement>(null);
+  const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   useEffect(() => {
+    function clearTimers() {
+      timersRef.current.forEach(clearTimeout);
+      timersRef.current = [];
+    }
+
+    function scheduleCycle(delay = START_DELAY) {
+      clearTimers();
+      setState("reported");
+
+      const approachingAt = delay;
+      const claimedAt = approachingAt + APPROACH_TIME;
+      const fixedAt = claimedAt + CLAIM_TIME;
+      const restartAt = fixedAt + FIX_TIME + REPEAT_DELAY;
+
+      timersRef.current = [
+        setTimeout(() => setState("approaching"), approachingAt),
+        setTimeout(() => setState("claimed"), claimedAt),
+        setTimeout(() => setState("fixed"), fixedAt),
+        setTimeout(() => scheduleCycle(0), restartAt),
+      ];
+    }
+
     const handleLoginState = (event: Event) => {
       const detail = (event as CustomEvent<LoginWorkshopEventDetail>).detail;
       if (detail?.state === "repairing" || detail?.state === "error") {
+        clearTimers();
         setState(detail.state);
+        if (detail.state === "error") {
+          timersRef.current = [setTimeout(() => scheduleCycle(0), REPEAT_DELAY)];
+        }
       }
     };
-    window.addEventListener(LOGIN_WORKSHOP_EVENT, handleLoginState);
-    return () => window.removeEventListener(LOGIN_WORKSHOP_EVENT, handleLoginState);
-  }, []);
 
-  function advanceRepair() {
-    setState((current) => {
-      if (current === "reported" || current === "error") return "claimed";
-      if (current === "claimed") return "fixed";
-      if (current === "fixed") return "reported";
-      return current;
-    });
-  }
+    if (initialError) {
+      timersRef.current = [setTimeout(() => scheduleCycle(0), REPEAT_DELAY)];
+    } else {
+      scheduleCycle();
+    }
+
+    window.addEventListener(LOGIN_WORKSHOP_EVENT, handleLoginState);
+    return () => {
+      clearTimers();
+      window.removeEventListener(LOGIN_WORKSHOP_EVENT, handleLoginState);
+    };
+  }, [initialError]);
 
   function followPointer(event: ReactPointerEvent<HTMLElement>) {
     const reducedMotion =
@@ -106,19 +141,12 @@ export function WorkshopScene({ initialError = false }: { initialError?: boolean
     sceneRef.current?.style.setProperty("--ziki-eye-y", "0px");
   }
 
-  const bugLabel =
-    state === "fixed"
-      ? "Repair another issue"
-      : state === "claimed"
-        ? "Finish repairing the issue"
-        : "Move the reported issue to claimed";
-
   return (
     <section
       ref={sceneRef}
       className="ziki-workshop relative min-h-[300px] w-full max-w-[560px] flex-1"
       data-state={state}
-      aria-label="Interactive Ziki repair line"
+      aria-label="Ziki agents automatically repairing an issue"
       onPointerMove={followPointer}
       onPointerLeave={resetEyes}
     >
@@ -128,31 +156,20 @@ export function WorkshopScene({ initialError = false }: { initialError?: boolean
       </div>
       <div className="ziki-workshop-bench">
         <div className="ziki-workshop-track" aria-hidden="true" />
-        <button
-          type="button"
-          className="ziki-workshop-bug"
-          onClick={advanceRepair}
-          aria-label={bugLabel}
-          disabled={state === "repairing"}
-        >
+        <div className="ziki-workshop-bug" aria-hidden="true">
           {state === "fixed" ? <FixedIcon /> : <BugIcon />}
-        </button>
+        </div>
         <div className="ziki-workshop-sparks" aria-hidden="true"><span /><span /><span /></div>
         <div className="ziki-workshop-stations">
           {stations.map((station, index) => (
-            <button
-              type="button"
+            <div
               className={`ziki-workshop-station ziki-workshop-station-${index + 1}`}
-              data-tip={station.explanation}
               key={station.key}
-              onClick={() => setState(station.key)}
-              aria-label={`${station.label}: ${station.explanation}`}
-              aria-pressed={state === station.key}
-              disabled={state === "repairing"}
+              title={station.explanation}
             >
               <span className="ziki-workshop-station-icon">{stationIcons[index]}</span>
               <span>{station.label}</span>
-            </button>
+            </div>
           ))}
         </div>
       </div>
@@ -162,13 +179,19 @@ export function WorkshopScene({ initialError = false }: { initialError?: boolean
         <span className="ziki-workshop-body"><b>ZI</b></span>
         <span className="ziki-workshop-arm" />
       </div>
+      <div className="ziki-workshop-agent-team" aria-hidden="true">
+        {["OB", "TR", "CO"].map((label) => (
+          <span className="ziki-workshop-mini-agent" key={label}>
+            <i className="ziki-workshop-mini-antenna" />
+            <i className="ziki-workshop-mini-face"><b /><b /></i>
+            <strong>{label}</strong>
+          </span>
+        ))}
+      </div>
       <span className="ziki-workshop-tool ziki-workshop-tool-left" aria-hidden="true">⌁</span>
       <span className="ziki-workshop-tool ziki-workshop-tool-right" aria-hidden="true">✦</span>
       <div className="ziki-workshop-status">
-        <p aria-live="polite">{statusText[state]}</p>
-        {state === "fixed" ? (
-          <button type="button" onClick={() => setState("reported")}>Repair another</button>
-        ) : null}
+        <p>{statusText[state]}</p>
       </div>
     </section>
   );
