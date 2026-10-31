@@ -3,12 +3,8 @@
   "buildCommand": "prisma generate && prisma migrate deploy && next build --webpack",
   "crons": [
     {
-      "path": "/api/v1/webhooks/dispatch",
-      "schedule": "* * * * *"
-    },
-    {
       "path": "/api/internal/cron",
-      "schedule": "* * * * *"
+      "schedule": "0 0 * * *"
     }
   ]
 }

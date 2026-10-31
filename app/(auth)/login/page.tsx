@@ -33,6 +33,7 @@ export default async function LoginPage({
     <main>
       <AuthSplitFrame
         title="Sign in to Ziki"
+        loginError={Boolean(params.error)}
         description={
           passwordEnabled
             ? "Sign in with Google or your email to report, vote on and track issues."

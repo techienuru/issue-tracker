@@ -8,6 +8,7 @@ import { GoogleSignInButtonInline } from "@/components/google-sign-in-button";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
+import { updateLoginWorkshop } from "@/lib/login-workshop-events";
 
 const fieldClass =
   "h-12 rounded-xl border-zk-border bg-zk-surface text-zk-text shadow-none placeholder:text-zk-muted focus:border-electric-blue focus:ring-electric-blue/20";
@@ -48,6 +49,7 @@ export function LoginForm({
       className="flex flex-col gap-4"
       onSubmit={(event) => {
         event.preventDefault();
+        updateLoginWorkshop("repairing");
         setError(null);
         setCredentialsInvalid(false);
         const formData = new FormData();
@@ -59,6 +61,7 @@ export function LoginForm({
           try {
             const result = await loginAction(undefined, formData);
             if (result?.error) {
+              updateLoginWorkshop("error");
               setError(result.error);
               setCredentialsInvalid(Boolean(result.field));
               if (result.needsCode) {
@@ -73,6 +76,7 @@ export function LoginForm({
           } catch (error) {
             // Must rethrow NEXT_REDIRECT so the framework can navigate
             unstable_rethrow(error);
+            updateLoginWorkshop("error");
             setError("Something went wrong. Please try again.");
           }
         });
@@ -84,12 +88,14 @@ export function LoginForm({
             pending={pending}
             onClick={() => {
               setError(null);
+              updateLoginWorkshop("repairing");
               startTransition(async () => {
                 try {
                   // Keep the requested page, e.g. an issue from its 404 (#457).
                   await googleSignInAction(callbackUrl);
                 } catch (error) {
                   unstable_rethrow(error);
+                  updateLoginWorkshop("error");
                   setError("Google sign-in failed. Please try again.");
                 }
               });

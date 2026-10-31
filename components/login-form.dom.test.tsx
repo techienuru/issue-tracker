@@ -5,6 +5,7 @@ import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { googleSignInAction, loginAction } from "@/app/actions/auth";
 import { LoginForm } from "./login-form";
+import { LOGIN_WORKSHOP_EVENT, type LoginWorkshopEventDetail } from "@/lib/login-workshop-events";
 
 vi.mock("@/app/actions/auth", () => ({ loginAction: vi.fn(), googleSignInAction: vi.fn() }));
 
@@ -67,5 +68,23 @@ describe("LoginForm Google sign-in (#457)", () => {
     render(<LoginForm callbackUrl="/issues/ZE-12?comment=c9" googleEnabled />);
     await user.click(screen.getByRole("button", { name: "Continue with Google" }));
     await waitFor(() => expect(googleSignInAction).toHaveBeenCalledWith("/issues/ZE-12?comment=c9"));
+  });
+});
+
+describe("LoginForm workshop feedback", () => {
+  it("starts the repair animation and reports a credential error", async () => {
+    const user = userEvent.setup();
+    const states: LoginWorkshopEventDetail["state"][] = [];
+    const listener = (event: Event) => {
+      states.push((event as CustomEvent<LoginWorkshopEventDetail>).detail.state);
+    };
+    window.addEventListener(LOGIN_WORKSHOP_EVENT, listener);
+    login.mockResolvedValueOnce({ error: "Invalid email or password", field: "email" });
+
+    render(<LoginForm />);
+    await fillAndSubmit(user);
+    await waitFor(() => expect(states).toEqual(["repairing", "error"]));
+
+    window.removeEventListener(LOGIN_WORKSHOP_EVENT, listener);
   });
 });

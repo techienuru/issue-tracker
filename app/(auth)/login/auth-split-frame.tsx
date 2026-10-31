@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { BASE_PATH } from "@/lib/base-path";
 import { REPORT_FORM_URL } from "@/lib/report-form";
+import { WorkshopScene } from "./workshop-scene";
 import "./auth-split-frame.css";
 
 function brandAsset(file: string) {
@@ -28,11 +29,11 @@ function CheckIcon() {
   );
 }
 
-function BrandPanel() {
+function BrandPanel({ loginError = false }: { loginError?: boolean }) {
   return (
     <section
       aria-label="About Ziki"
-      className="relative flex w-full flex-col gap-10 overflow-hidden bg-deep-ocean px-8 py-12 text-white sm:px-14 lg:min-h-[min(100vh,720px)] lg:flex-[1_1_560px]"
+      className="relative flex w-full flex-col gap-7 overflow-hidden bg-deep-ocean px-8 py-8 text-white sm:px-14 sm:py-12 lg:min-h-[min(100vh,720px)] lg:flex-[1_1_560px] lg:gap-10"
     >
       <div
         aria-hidden="true"
@@ -89,89 +90,13 @@ function BrandPanel() {
           Issue tracking for teams and their AI agents
         </span>
         <h1 className="text-[clamp(34px,3.6vw,50px)] leading-[1.08] font-extrabold tracking-[-0.03em]">
-          Every bug, voted up
+          Bugs come in.
           <br />
-          <span className="text-sky-tint">and shipped.</span>
+          <span className="text-sky-tint">Better software goes out.</span>
         </h1>
-        <p className="text-[17px] leading-relaxed text-[#C9D6EF]">
-          Report issues, vote on what matters and track every fix — alongside your team and
-          your agents.
-        </p>
       </div>
 
-      <div
-        aria-hidden="true"
-        className="relative min-h-[300px] w-full max-w-[560px] flex-1"
-      >
-        <div className="ziki-auth-float-a absolute top-0 right-10 left-0 flex items-start gap-3.5 rounded-[18px] bg-white p-[18px] text-[#15121F] shadow-[0_24px_60px_rgba(0,0,0,0.35)]">
-          <span className="flex h-10 w-[46px] shrink-0 items-center justify-center gap-0.5 rounded-full border border-electric-blue-strong bg-electric-blue-strong text-[13px] font-extrabold text-white">
-            <svg
-              width="12"
-              height="12"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="3"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="m18 15-6-6-6 6" />
-            </svg>
-            24
-          </span>
-          <div className="flex min-w-0 flex-col gap-2">
-            <span className="text-sm leading-snug font-bold">
-              Google sign-in skips two-factor for a password account
-            </span>
-            <div className="flex flex-wrap gap-1.5 text-[11px] font-bold">
-              <span className="text-[#5F6577]">#388</span>
-              <span className="rounded-full border border-[#F4B3A8] bg-[#FDE8E4] px-2 py-0.5 text-[#A3261A]">
-                High
-              </span>
-              <span className="rounded-full bg-[#E3F6EC] px-2 py-0.5 text-[#146C43]">
-                Confirmed
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <div className="ziki-auth-float-b absolute top-[132px] left-9 flex w-[250px] flex-col gap-2.5 rounded-[18px] border border-[#263B63] bg-[#13213F] px-[18px] py-4 shadow-[0_24px_60px_rgba(0,0,0,0.35)]">
-          <div className="flex items-baseline justify-between">
-            <span className="text-[13px] font-bold text-[#C9D6EF]">Points this week</span>
-            <span className="text-xs font-bold text-sky-tint">90%</span>
-          </div>
-          <span className="text-[28px] leading-none font-extrabold">
-            450 <span className="text-sm font-semibold text-[#A9BCDF]">/ 500</span>
-          </span>
-          <div className="h-2 overflow-hidden rounded-full bg-[#263B63]">
-            <div className="h-full w-[90%] rounded-full bg-electric-blue" />
-          </div>
-        </div>
-
-        <div className="ziki-auth-float-a absolute top-44 right-0 flex w-[230px] items-center gap-3 rounded-[18px] bg-white px-4 py-3.5 text-[#15121F] shadow-[0_24px_60px_rgba(0,0,0,0.35)]">
-          <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[#EAF2FE] text-[#1F5FD9]">
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <rect x="4" y="8" width="16" height="12" rx="2" />
-              <path d="M12 4v4" />
-              <path d="M9 14h.01" />
-              <path d="M15 14h.01" />
-            </svg>
-          </span>
-          <div className="flex flex-col gap-0.5">
-            <span className="text-[13px] font-bold">Agent claimed #400</span>
-            <span className="text-xs text-[#5F6577]">Contributor · just now</span>
-          </div>
-        </div>
-      </div>
+      <WorkshopScene initialError={loginError} />
 
       <div className="relative flex flex-wrap gap-6 text-sm text-[#C9D6EF]">
         {["Report", "Vote", "Track", "Earn points"].map((label) => (
@@ -308,6 +233,7 @@ export function AuthSplitFrame({
   title,
   description,
   mark = true,
+  loginError = false,
 }: {
   children: ReactNode;
   panelLabel?: string;
@@ -315,10 +241,11 @@ export function AuthSplitFrame({
   title: string;
   description?: ReactNode;
   mark?: boolean;
+  loginError?: boolean;
 }) {
   return (
     <div className="zk-motion ziki-auth-frame flex min-h-screen flex-col bg-zk-bg text-zk-text lg:flex-row">
-      <BrandPanel />
+      <BrandPanel loginError={loginError} />
       <section
         aria-label={panelLabel}
         className="relative flex w-full flex-col items-center justify-center gap-7 px-6 py-10 sm:px-8 lg:flex-[1_1_480px]"

@@ -2,6 +2,7 @@
 
 import { useFormStatus } from "react-dom";
 import { googleSignInAction } from "@/app/actions/auth";
+import { updateLoginWorkshop } from "@/lib/login-workshop-events";
 
 function GoogleGlyph() {
   return (
@@ -47,7 +48,11 @@ export function GoogleSignInButton({
   callbackUrl?: string;
 }) {
   return (
-    <form action={googleSignInAction} className="w-full">
+    <form
+      action={googleSignInAction}
+      className="w-full"
+      onSubmit={() => updateLoginWorkshop("repairing")}
+    >
       <input type="hidden" name="callbackUrl" value={callbackUrl} />
       <SubmitButton />
     </form>
