@@ -1,0 +1,351 @@
+.experience {
+  display: grid;
+  gap: 2.5rem;
+  margin-inline: auto;
+  max-width: 58rem;
+  padding-block: 3rem;
+}
+
+.scene {
+  align-items: end;
+  aspect-ratio: 16 / 11;
+  background:
+    radial-gradient(circle at 70% 24%, color-mix(in srgb, var(--zk-accent) 16%, transparent), transparent 24%),
+    linear-gradient(color-mix(in srgb, var(--zk-border) 50%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--zk-border) 50%, transparent) 1px, transparent 1px),
+    var(--zk-surface);
+  background-size: auto, 28px 28px, 28px 28px, auto;
+  border: 1px solid var(--zk-border);
+  border-radius: 1.75rem;
+  box-shadow: 0 24px 70px color-mix(in srgb, var(--color-deep-ocean) 12%, transparent);
+  display: flex;
+  justify-content: center;
+  min-height: 17rem;
+  overflow: hidden;
+  position: relative;
+}
+
+.scene::after {
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--zk-accent) 24%, transparent), transparent);
+  bottom: 2.7rem;
+  content: "";
+  height: 1px;
+  left: 10%;
+  position: absolute;
+  right: 10%;
+}
+
+.agent {
+  bottom: 2.8rem;
+  height: 8.8rem;
+  left: 17%;
+  position: absolute;
+  width: 7.5rem;
+  z-index: 2;
+}
+
+.antenna {
+  background: var(--zk-accent);
+  border-radius: 999px;
+  height: 1.8rem;
+  left: 50%;
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  width: 0.2rem;
+}
+
+.antenna::before {
+  animation: signal 1.8s ease-in-out infinite;
+  background: var(--color-sky-tint);
+  border: 3px solid var(--zk-surface);
+  border-radius: 50%;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--zk-accent) 25%, transparent);
+  content: "";
+  height: 0.8rem;
+  left: 50%;
+  position: absolute;
+  top: -0.25rem;
+  transform: translateX(-50%);
+  width: 0.8rem;
+}
+
+.head {
+  background: var(--color-electric-blue);
+  border: 3px solid var(--color-deep-ocean);
+  border-radius: 1.5rem;
+  height: 5.1rem;
+  left: 50%;
+  position: absolute;
+  top: 1.4rem;
+  transform: translateX(-50%);
+  width: 6.6rem;
+}
+
+.face {
+  background: #f8fbff;
+  border: 3px solid var(--color-deep-ocean);
+  border-radius: 1rem;
+  height: 2.65rem;
+  left: 0.7rem;
+  position: absolute;
+  right: 0.7rem;
+  top: 0.8rem;
+}
+
+.eye {
+  background: var(--color-deep-ocean);
+  border-radius: 50%;
+  height: 0.45rem;
+  position: absolute;
+  top: 0.75rem;
+  width: 0.45rem;
+}
+
+.eye:first-child {
+  left: 0.75rem;
+}
+
+.eye:last-child {
+  right: 0.75rem;
+}
+
+.mouth {
+  border-bottom: 2px solid var(--color-deep-ocean);
+  border-radius: 50%;
+  bottom: 0.45rem;
+  height: 0.45rem;
+  left: 50%;
+  position: absolute;
+  transform: translateX(-50%) rotate(8deg);
+  width: 0.9rem;
+}
+
+.body {
+  background: var(--color-blue-slate);
+  border: 3px solid var(--color-deep-ocean);
+  border-radius: 1.2rem 1.2rem 0.7rem 0.7rem;
+  bottom: 0;
+  height: 3.25rem;
+  left: 50%;
+  position: absolute;
+  transform: translateX(-50%);
+  width: 4.7rem;
+}
+
+.arm {
+  animation: reach 2.4s ease-in-out infinite;
+  background: var(--color-electric-blue);
+  border: 3px solid var(--color-deep-ocean);
+  border-radius: 999px;
+  height: 1rem;
+  position: absolute;
+  right: -2.4rem;
+  top: 0.5rem;
+  transform: rotate(-18deg);
+  transform-origin: left center;
+  width: 3.1rem;
+}
+
+.card {
+  animation: escape 3.8s cubic-bezier(0.45, 0, 0.25, 1) infinite;
+  background: var(--zk-surface);
+  border: 2px solid var(--zk-accent);
+  border-radius: 1rem;
+  box-shadow: 0 16px 35px color-mix(in srgb, var(--color-deep-ocean) 18%, transparent);
+  color: var(--zk-text);
+  padding: 0.9rem;
+  position: absolute;
+  right: 14%;
+  top: 23%;
+  transform: rotate(7deg);
+  transition: transform 260ms ease, box-shadow 260ms ease;
+  width: 8.8rem;
+  z-index: 3;
+}
+
+.scene:hover .card {
+  box-shadow: 0 22px 42px color-mix(in srgb, var(--zk-accent) 28%, transparent);
+  transform: translate(0.65rem, -0.45rem) rotate(11deg);
+}
+
+.cardNumber {
+  color: var(--zk-accent);
+  display: block;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.cardTitle {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 800;
+  margin-top: 0.35rem;
+}
+
+.cardLine {
+  background: var(--zk-divider);
+  border-radius: 999px;
+  display: block;
+  height: 0.35rem;
+  margin-top: 0.65rem;
+  width: 72%;
+}
+
+.trail {
+  border-top: 2px dashed color-mix(in srgb, var(--zk-accent) 45%, transparent);
+  height: 3.5rem;
+  position: absolute;
+  right: 24%;
+  top: 53%;
+  transform: rotate(-15deg);
+  width: 24%;
+}
+
+.copy {
+  align-self: center;
+  max-width: 29rem;
+}
+
+.code {
+  align-items: center;
+  color: var(--zk-accent);
+  display: inline-flex;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.8rem;
+  font-weight: 800;
+  gap: 0.5rem;
+}
+
+.code::before {
+  background: var(--color-sky-tint);
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--zk-accent) 12%, transparent);
+  content: "";
+  height: 0.55rem;
+  width: 0.55rem;
+}
+
+.title {
+  color: var(--zk-text);
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 1.02;
+  margin-top: 1rem;
+}
+
+.description {
+  color: var(--zk-text2);
+  font-size: 1rem;
+  line-height: 1.7;
+  margin-top: 1.25rem;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.75rem;
+}
+
+.primary,
+.secondary {
+  align-items: center;
+  border-radius: 999px;
+  display: inline-flex;
+  font-size: 0.875rem;
+  font-weight: 800;
+  justify-content: center;
+  min-height: 2.75rem;
+  padding-inline: 1.2rem;
+  transition: transform 180ms ease, background-color 180ms ease;
+}
+
+.primary {
+  background: var(--color-electric-blue-strong);
+  color: white;
+}
+
+.secondary {
+  border: 1px solid var(--zk-border);
+  color: var(--zk-text);
+}
+
+.primary:hover,
+.secondary:hover {
+  transform: translateY(-2px);
+}
+
+.secondary:hover {
+  background: var(--zk-chip);
+}
+
+.primary:focus-visible,
+.secondary:focus-visible {
+  outline: 3px solid var(--color-sky-tint);
+  outline-offset: 3px;
+}
+
+@keyframes escape {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(7deg);
+  }
+  50% {
+    transform: translate(0.7rem, -0.65rem) rotate(11deg);
+  }
+}
+
+@keyframes reach {
+  0%,
+  100% {
+    transform: rotate(-18deg);
+  }
+  50% {
+    transform: rotate(-30deg) translateX(0.35rem);
+  }
+}
+
+@keyframes signal {
+  50% {
+    box-shadow: 0 0 0 8px color-mix(in srgb, var(--zk-accent) 4%, transparent);
+  }
+}
+
+@media (min-width: 48rem) {
+  .experience {
+    align-items: center;
+    grid-template-columns: minmax(0, 1.08fr) minmax(18rem, 0.92fr);
+    min-height: min(42rem, calc(100vh - 6rem));
+    padding-block: 4rem;
+  }
+}
+
+@media (max-width: 30rem) {
+  .agent {
+    left: 10%;
+    transform: scale(0.82);
+    transform-origin: bottom left;
+  }
+
+  .card {
+    right: 8%;
+    transform: scale(0.9) rotate(7deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .antenna::before,
+  .arm,
+  .card {
+    animation: none;
+  }
+
+  .primary,
+  .secondary,
+  .card {
+    transition: none;
+  }
+}

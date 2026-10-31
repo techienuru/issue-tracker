@@ -1,5 +1,4 @@
-import Link from "next/link";
-import { StatusPage, primaryActionClass } from "@/components/status-page";
+import { NotFoundExperience } from "@/components/not-found-experience";
 
 /**
  * Shown when a signed-in page calls notFound() and its segment has no
@@ -8,17 +7,5 @@ import { StatusPage, primaryActionClass } from "@/components/status-page";
  * not-found.tsx; this one stays general so it never names the wrong thing.
  */
 export default function AppNotFound() {
-  return (
-    <StatusPage
-      code="404"
-      title="We couldn't find that page"
-      actions={
-        <Link href="/issues" className={primaryActionClass}>
-          Go to issues
-        </Link>
-      }
-    >
-      <p>The link may be wrong, or what it pointed to may have been moved or deleted.</p>
-    </StatusPage>
-  );
+  return <NotFoundExperience />;
 }
