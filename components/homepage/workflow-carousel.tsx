@@ -48,7 +48,15 @@ function AgentPair({ names }: { names: readonly string[] }) {
   );
 }
 
-export function WorkflowCarousel({ signedIn = false }: { signedIn?: boolean }) {
+export function WorkflowCarousel({
+  signedIn = false,
+  launchSignal = 0,
+  onStepChange,
+}: {
+  signedIn?: boolean;
+  launchSignal?: number;
+  onStepChange?: (step: number, complete: boolean) => void;
+}) {
   const [activeStep, setActiveStep] = useState(0);
   const [started, setStarted] = useState(false);
   const [complete, setComplete] = useState(false);
@@ -58,14 +66,17 @@ export function WorkflowCarousel({ signedIn = false }: { signedIn?: boolean }) {
   const [selectedCrew, setSelectedCrew] = useState<(typeof crew)[number]["id"]>("observer");
   const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "failed">("idle");
   const missionRef = useRef<HTMLDivElement>(null);
+  const lastLaunchSignal = useRef(launchSignal);
 
   useEffect(() => {
     const reducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
     if (reducedMotion) {
-      setActiveStep(missionSteps.length - 1);
-      setStarted(true);
-      setComplete(true);
-      return;
+      const reducedMotionTimer = window.setTimeout(() => {
+        setActiveStep(missionSteps.length - 1);
+        setStarted(true);
+        setComplete(true);
+      }, 0);
+      return () => window.clearTimeout(reducedMotionTimer);
     }
     const element = missionRef.current;
     if (!element || typeof IntersectionObserver === "undefined") {
@@ -96,6 +107,23 @@ export function WorkflowCarousel({ signedIn = false }: { signedIn?: boolean }) {
     }, activeStep === 0 ? 2200 : 2600);
     return () => window.clearTimeout(timer);
   }, [activeStep, complete, paused, started, visibilityTick]);
+
+  useEffect(() => {
+    onStepChange?.(activeStep, complete);
+  }, [activeStep, complete, onStepChange]);
+
+  useEffect(() => {
+    if (launchSignal === lastLaunchSignal.current) return;
+    lastLaunchSignal.current = launchSignal;
+    const restartTimer = window.setTimeout(() => {
+      setActiveStep(0);
+      setComplete(false);
+      setPaused(false);
+      setCrewOpen(false);
+      setStarted(true);
+    }, 0);
+    return () => window.clearTimeout(restartTimer);
+  }, [launchSignal]);
 
   const selected = crew.find((member) => member.id === selectedCrew) ?? crew[0];
   const connectHref = signedIn ? "/settings/agents/connect" : "/login?callbackUrl=%2Fsettings%2Fagents%2Fconnect";

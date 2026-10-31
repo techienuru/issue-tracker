@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
 import { afterEach, describe, expect, it, vi } from "vitest";
 import "@testing-library/jest-dom/vitest";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import Homepage from "./homepage";
 
 vi.mock("@/components/theme-toggle", () => ({
@@ -23,5 +23,16 @@ describe("public homepage API documentation links (#631)", () => {
       expect(link).toHaveAccessibleName(/llms\.txt|machine-readable/i);
     }
     expect(screen.queryByRole("link", { name: /api docs|api documentation/i })).not.toBeInTheDocument();
+  });
+
+  it("lets a visitor launch the issue journey from the hero", async () => {
+    render(<Homepage />);
+
+    expect(screen.getByRole("button", { name: "Move issue 1847 forward" })).toBeInTheDocument();
+    const trigger = screen.getByRole("button", { name: "Move an issue forward" });
+    fireEvent.click(trigger);
+
+    await waitFor(() => expect(screen.getByRole("button", { name: "Replay the journey" })).toBeInTheDocument());
+    expect(screen.getAllByText("Login session expires too early")).toHaveLength(2);
   });
 });

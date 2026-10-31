@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import "@testing-library/jest-dom/vitest";
-import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { WorkflowCarousel, ZIKI_SETUP_PROMPT } from "./workflow-carousel";
 
 beforeEach(() => {
@@ -73,5 +73,16 @@ describe("The Ziki Mission", () => {
 
     expect(screen.getByRole("link", { name: "Connect my first agent" })).toHaveAttribute("href", "/settings/agents/connect");
     expect(screen.getByRole("link", { name: "Continue to dashboard" })).toHaveAttribute("href", "/dashboard");
+  });
+
+  it("restarts when the hero launches a new journey", async () => {
+    const { rerender } = render(<WorkflowCarousel launchSignal={0} />);
+    fireEvent.click(screen.getByRole("button", { name: "Show mission step 4: Assign the work" }));
+    expect(screen.getByRole("button", { name: "Show mission step 4: Assign the work" })).toHaveAttribute("aria-current", "step");
+
+    rerender(<WorkflowCarousel launchSignal={1} />);
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: "Show mission step 1: Prepare the crew" })).toHaveAttribute("aria-current", "step");
+    });
   });
 });
