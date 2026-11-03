@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, useSyncExternalStore, type PointerEvent as ReactPointerEvent } from 'react';
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore, type CSSProperties, type PointerEvent as ReactPointerEvent } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useTheme, applyThemeClient } from '@/components/theme-toggle';
@@ -46,6 +46,18 @@ function Icon({ name, size = 18 }: { name: IconName; size?: number }) {
     </svg>
   )
 }
+
+function BugIcon() {
+  return (
+    <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+      <path d="M11 10.5 8 7.5M21 10.5l3-3M9 16H5M27 16h-4M9.5 22 6 25M22.5 22l3.5 3" />
+      <rect x="10" y="9" width="12" height="16" rx="6" />
+      <path d="M10 16h12M16 9v16" />
+    </svg>
+  );
+}
+
+type BugFlight = { left: number; top: number; dx: number; dy: number };
 
 const navItems = [
   ['How it works', 'how-it-works'],
@@ -110,10 +122,15 @@ function getSystemDark() { return window.matchMedia('(prefers-color-scheme: dark
 function Homepage({ signedIn = false }: { signedIn?: boolean }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const [heroLaunched, setHeroLaunched] = useState(false);
+  const [bugFound, setBugFound] = useState(false);
+  const [bugFlight, setBugFlight] = useState<BugFlight | null>(null);
   const [launchSignal, setLaunchSignal] = useState(0);
   const [journeyStep, setJourneyStep] = useState(0);
   const [theme, setTheme] = useTheme();
   const heroRef = useRef<HTMLDivElement>(null);
+  const headlineBugRef = useRef<HTMLButtonElement>(null);
+  const issueBugRef = useRef<HTMLSpanElement>(null);
+  const bugTimerRef = useRef<number | null>(null);
   const scrollTimerRef = useRef<number | null>(null);
   const systemDark = useSyncExternalStore(subscribeSystemTheme, getSystemDark, () => false);
   const darkMode = theme === 'dark' || (theme === 'system' && systemDark);
@@ -138,6 +155,7 @@ function Homepage({ signedIn = false }: { signedIn?: boolean }) {
 
   useEffect(() => () => {
     if (scrollTimerRef.current !== null) window.clearTimeout(scrollTimerRef.current);
+    if (bugTimerRef.current !== null) window.clearTimeout(bugTimerRef.current);
   }, []);
 
   const handleMissionStep = useCallback((step: number) => {
@@ -172,6 +190,31 @@ function Homepage({ signedIn = false }: { signedIn?: boolean }) {
     scrollTimerRef.current = window.setTimeout(() => {
       document.getElementById('how-it-works')?.scrollIntoView?.({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' });
     }, reducedMotion ? 0 : 720);
+  }
+
+  function catchHeadlineBug() {
+    if (bugFound) return;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const source = headlineBugRef.current?.getBoundingClientRect();
+    const destination = issueBugRef.current?.getBoundingClientRect();
+    const frame = heroRef.current?.getBoundingClientRect();
+    if (!reducedMotion && source && destination && frame) {
+      const sourceX = source.left + source.width / 2;
+      const sourceY = source.top + source.height / 2;
+      setBugFlight({
+        left: sourceX - frame.left - 16,
+        top: sourceY - frame.top - 16,
+        dx: destination.left + destination.width / 2 - sourceX,
+        dy: destination.top + destination.height / 2 - sourceY,
+      });
+    }
+    setBugFound(true);
+    if (bugTimerRef.current !== null) window.clearTimeout(bugTimerRef.current);
+    bugTimerRef.current = window.setTimeout(() => {
+      setBugFlight(null);
+      launchIssueJourney();
+      bugTimerRef.current = null;
+    }, reducedMotion ? 0 : 800);
   }
 
   const currentJourney = issueJourney[journeyStep] ?? issueJourney[0];
@@ -216,6 +259,7 @@ function Homepage({ signedIn = false }: { signedIn?: boolean }) {
           ref={heroRef}
           className="hero-frame"
           data-journey={heroLaunched ? 'launched' : 'waiting'}
+          data-bug-found={bugFound}
           style={{ background: 'transparent', borderColor: 'rgba(214, 223, 240, 0)', boxShadow: 'none' }}
           onPointerMove={followIssue}
           onPointerLeave={resetIssuePosition}
@@ -227,12 +271,22 @@ function Homepage({ signedIn = false }: { signedIn?: boolean }) {
           </div>
 
           <button className="hero-issue-card" type="button" onClick={launchIssueJourney} aria-label="Move issue 1847 forward">
-            <span className="hero-issue-bug" aria-hidden="true">
-              <svg viewBox="0 0 32 32" fill="none"><path d="M11 10.5 8 7.5M21 10.5l3-3M9 16H5M27 16h-4M9.5 22 6 25M22.5 22l3.5 3" /><rect x="10" y="9" width="12" height="16" rx="6" /><path d="M10 16h12M16 9v16" /></svg>
+            <span ref={issueBugRef} className="hero-issue-bug" aria-hidden="true">
+              <BugIcon />
             </span>
             <span><small>#1847 · RUNAWAY ISSUE</small><strong>Login session expires too early</strong></span>
             <i aria-hidden="true">Move me</i>
           </button>
+
+          {bugFlight ? (
+            <span
+              className="headline-bug-flight"
+              aria-hidden="true"
+              style={{ left: bugFlight.left, top: bugFlight.top, '--bug-dx': `${bugFlight.dx}px`, '--bug-dy': `${bugFlight.dy}px` } as CSSProperties}
+            >
+              <BugIcon />
+            </span>
+          ) : null}
 
           <div className="hero-scouts" aria-hidden="true">
             {['OB', 'TR', 'CO'].map((agent) => <span key={agent}><i><b /><b /></i><small>{agent}</small></span>)}
@@ -241,7 +295,24 @@ function Homepage({ signedIn = false }: { signedIn?: boolean }) {
           <div className="hero-content">
             <span className="hero-kicker">Collaborative software delivery</span>
             <h1 className="hero-title" aria-label="Move every issue forward with your agents">
-              <span className="hero-title-small">Move every issue</span>
+              <span className="hero-title-small">
+                Move every{' '}
+                <span className="hero-title-issue">
+                  iss
+                  <button
+                    ref={headlineBugRef}
+                    className="headline-bug-letter"
+                    type="button"
+                    onClick={bugFound ? launchIssueJourney : catchHeadlineBug}
+                    aria-label={bugFound ? 'Replay the issue journey' : 'Catch the bug in the headline'}
+                    title={bugFound ? 'Replay the journey' : 'Catch the bug'}
+                  >
+                    <span aria-hidden="true">u</span>
+                    <span className="headline-bug-mark" aria-hidden="true"><BugIcon /></span>
+                  </button>
+                  e
+                </span>
+              </span>
               <span className="hero-title-word">
                 f
                 <span className="progress-switch" aria-hidden="true">
@@ -257,8 +328,8 @@ function Homepage({ signedIn = false }: { signedIn?: boolean }) {
             <p className="hero-copy">Agents discover issues, propose a plan, deliver fixes, and validate work on behalf of your team. Every action is permissioned, attributable, and under human control.</p>
             <div className="hero-actions">
               <Link className="button button-large" href="/login">Get started free <Icon name="arrow" size={17} /></Link>
-              <button className="hero-text-link hero-journey-trigger" type="button" onClick={launchIssueJourney}>
-                {heroLaunched ? 'Replay the journey' : 'Move an issue forward'}
+              <button className="hero-text-link hero-journey-trigger" type="button" onClick={bugFound ? launchIssueJourney : catchHeadlineBug}>
+                {bugFound ? 'Replay the journey' : 'Find the bug'}
               </button>
             </div>
           </div>

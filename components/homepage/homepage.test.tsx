@@ -25,14 +25,19 @@ describe("public homepage API documentation links (#631)", () => {
     expect(screen.queryByRole("link", { name: /api docs|api documentation/i })).not.toBeInTheDocument();
   });
 
-  it("lets a visitor launch the issue journey from the hero", async () => {
+  it("lets a visitor catch the headline bug and launch the issue journey", async () => {
     render(<Homepage />);
 
+    expect(screen.getByRole("heading", { level: 1, name: "Move every issue forward with your agents" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Catch the bug in the headline" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Move issue 1847 forward" })).toBeInTheDocument();
-    const trigger = screen.getByRole("button", { name: "Move an issue forward" });
+    const trigger = screen.getByRole("button", { name: "Find the bug" });
     fireEvent.click(trigger);
 
-    await waitFor(() => expect(screen.getByRole("button", { name: "Replay the journey" })).toBeInTheDocument());
+    expect(screen.queryByRole("button", { name: "Catch the bug in the headline" })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Replay the issue journey" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Replay the journey" })).toBeInTheDocument();
+    await waitFor(() => expect(document.querySelector(".hero-frame")).toHaveAttribute("data-journey", "launched"), { timeout: 2000 });
     expect(screen.getAllByText("Login session expires too early")).toHaveLength(2);
   });
 });

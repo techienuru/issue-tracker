@@ -248,6 +248,64 @@
 .ziki-homepage .hero-kicker { color: #697894; font-size: 9px; font-weight: 700; letter-spacing: .13em; margin-bottom: 15px; text-transform: uppercase; }
 .ziki-homepage .hero-title { align-items: center; display: flex; flex-direction: column; font-family: 'Manrope'; font-weight: 700; letter-spacing: -3px; line-height: .92; }
 .ziki-homepage .hero-title-small { font-size: clamp(31px, 3.5vw, 47px); }
+.ziki-homepage .hero-title-issue { white-space: nowrap; }
+.ziki-homepage .headline-bug-letter {
+  animation: headline-letter-glitch 3.8s steps(1, end) infinite;
+  background: transparent;
+  border: 0;
+  color: #3978f6;
+  display: inline-block;
+  font: inherit;
+  letter-spacing: inherit;
+  line-height: inherit;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  transform: translateY(-.13em) rotate(-11deg);
+}
+.ziki-homepage .headline-bug-letter:hover { color: #2359cf; }
+.ziki-homepage .headline-bug-mark {
+  color: #3978f6;
+  display: block;
+  height: .35em;
+  position: absolute;
+  right: -.2em;
+  top: -.37em;
+  transform: rotate(18deg);
+  width: .35em;
+}
+.ziki-homepage .headline-bug-mark svg,
+.ziki-homepage .headline-bug-flight svg { height: 100%; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2; width: 100%; }
+.ziki-homepage .hero-frame[data-bug-found='true'] .headline-bug-letter { animation: none; color: inherit; transform: none; }
+.ziki-homepage .hero-frame[data-bug-found='true'] .headline-bug-mark { display: none; }
+.ziki-homepage .headline-bug-flight {
+  align-items: center;
+  animation: headline-bug-escape .8s cubic-bezier(.22,.8,.3,1) both;
+  background: #eaf2ff;
+  border: 1px solid #8fc9ff;
+  border-radius: 10px;
+  box-shadow: 0 8px 18px rgba(57,120,246,.2);
+  color: #3978f6;
+  display: flex;
+  height: 32px;
+  justify-content: center;
+  padding: 5px;
+  pointer-events: none;
+  position: absolute;
+  width: 32px;
+  z-index: 6;
+}
+@keyframes headline-letter-glitch {
+  0%, 86%, 91%, 100% { transform: translateY(-.13em) rotate(-11deg); }
+  88% { transform: translate(.08em, -.23em) rotate(7deg); }
+  89% { transform: translate(-.05em, -.08em) rotate(-16deg); }
+}
+@keyframes headline-bug-escape {
+  0% { opacity: 0; transform: translate(0, 0) rotate(-20deg) scale(.4); }
+  18% { opacity: 1; transform: translate(0, -.5em) rotate(12deg) scale(1.1); }
+  80% { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--bug-dx), var(--bug-dy)) rotate(360deg) scale(.65); }
+}
 .ziki-homepage .hero-title-word { align-items: center; display: flex; font-size: clamp(74px, 9.8vw, 134px); letter-spacing: -9px; margin: -2px 0 1px; position: relative; }
 .ziki-homepage .progress-switch {
   display: inline-flex;
@@ -811,6 +869,8 @@
   .ziki-homepage { scroll-behavior: auto; }
   .ziki-homepage *, .ziki-homepage *::before, .ziki-homepage *::after { transition-duration: .01ms !important; }
   .ziki-homepage .switch-pulse,
+  .ziki-homepage .headline-bug-letter,
+  .ziki-homepage .headline-bug-flight,
   .ziki-homepage .hero-issue-card,
   .ziki-homepage .hero-scouts > span,
   .ziki-homepage .console-footer .stream-dot,
