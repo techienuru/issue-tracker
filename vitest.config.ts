@@ -2,6 +2,16 @@ import path from "node:path";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
+  plugins: [{
+    name: "strip-agent-cli-shebang",
+    enforce: "pre",
+    transform(code, id) {
+      // Vite Node cannot evaluate an imported CLI hashbang; Node can still run the file directly.
+      if (id.replaceAll("\\", "/").endsWith("/scripts/ziki-agent.mjs")) {
+        return code.replace(/^#![^\r\n]*/, "");
+      }
+    },
+  }],
   test: {
     // Node by default: most specs are pure logic or route handlers that need
     // Node's Request/FormData globals. Component specs opt into a DOM per file

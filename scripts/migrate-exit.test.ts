@@ -8,123 +8,55 @@ import { afterEach, describe, expect, it } from "vitest";
  * Runs scripts/migrate.mjs against a stand-in `prisma` binary, so the exit
  * code can be checked without a database (#580).
  */
+type StubScenario = "always" | "init-then-success" | "init-missing-user" | "duplicate-column";
 const dirs: string[] = [];
 
-function run(prismaExitCode: number, env: Record<string, string | undefined>) {
+function runFixture(scenario: StubScenario, env: Record<string, string | undefined>, exitCode = 0) {
   const dir = mkdtempSync(join(tmpdir(), "migrate-exit-"));
   dirs.push(dir);
   mkdirSync(join(dir, "scripts"));
   cpSync("scripts/migrate.mjs", join(dir, "scripts/migrate.mjs"));
   cpSync("scripts/migration-database-url.mjs", join(dir, "scripts/migration-database-url.mjs"));
-  mkdirSync(join(dir, "node_modules/.bin"), { recursive: true });
-  const prisma = join(dir, "node_modules/.bin/prisma");
-  writeFileSync(
-    prisma,
-    `#!/bin/sh\necho "url=$DATABASE_URL" >> "${join(dir, "calls.log")}"\necho "prisma $*" >> "${join(dir, "calls.log")}"\nexit ${prismaExitCode}\n`,
-  );
-  chmodSync(prisma, 0o755);
+  cpSync("scripts/prisma-stub.test.mjs", join(dir, "scripts/prisma-stub.test.mjs"));
+  mkdirSync(join(dir, "node_modules", ".bin"), { recursive: true });
+
+  const stub = join(dir, "scripts", "prisma-stub.test.mjs");
+  const prisma = join(dir, "node_modules", ".bin", process.platform === "win32" ? "prisma.cmd" : "prisma");
+  const runner = process.platform === "win32"
+    ? ["@echo off", '"' + process.execPath + '" "' + stub + '" %*', "exit /b %errorlevel%", ""].join("\r\n")
+    : ["#!/bin/sh", 'exec "' + process.execPath + '" "' + stub + '" "$@"', ""].join("\n");
+  writeFileSync(prisma, runner);
+  if (process.platform !== "win32") chmodSync(prisma, 0o755);
+
+  const callsFile = join(dir, "calls.log");
   const result = spawnSync(process.execPath, ["scripts/migrate.mjs"], {
     cwd: dir,
-    // Only what the script needs, so the parent's NODE_ENV and DATABASE_URL don't leak in.
-    env: { PATH: process.env.PATH, ...env } as unknown as NodeJS.ProcessEnv,
+    // The stub gets only test inputs, never the parent's database URL.
+    env: {
+      PATH: process.env.PATH,
+      PRISMA_STUB_LOG: callsFile,
+      PRISMA_STUB_SCENARIO: scenario,
+      PRISMA_STUB_EXIT: String(exitCode),
+      ...env,
+    } as unknown as NodeJS.ProcessEnv,
     encoding: "utf8",
   });
   const calls = (() => {
     try {
-      return readFileSync(join(dir, "calls.log"), "utf8");
+      return readFileSync(callsFile, "utf8");
     } catch {
       return "";
     }
   })();
-  return { status: result.status, output: `${result.stdout}${result.stderr}`, calls };
+  return { status: result.status, output: result.stdout + result.stderr, calls };
 }
 
-function runStub(script: string, env: Record<string, string | undefined>) {
-  const dir = mkdtempSync(join(tmpdir(), "migrate-exit-"));
-  dirs.push(dir);
-  mkdirSync(join(dir, "scripts"));
-  cpSync("scripts/migrate.mjs", join(dir, "scripts/migrate.mjs"));
-  cpSync("scripts/migration-database-url.mjs", join(dir, "scripts/migration-database-url.mjs"));
-  mkdirSync(join(dir, "node_modules/.bin"), { recursive: true });
-  const prisma = join(dir, "node_modules/.bin/prisma");
-  const calls = join(dir, "calls.log");
-  writeFileSync(prisma, script.replaceAll("__CALLS__", calls));
-  chmodSync(prisma, 0o755);
-  const result = spawnSync(process.execPath, ["scripts/migrate.mjs"], {
-    cwd: dir,
-    env: { PATH: process.env.PATH, ...env } as unknown as NodeJS.ProcessEnv,
-    encoding: "utf8",
-  });
-  const log = (() => {
-    try {
-      return readFileSync(calls, "utf8");
-    } catch {
-      return "";
-    }
-  })();
-  return { status: result.status, output: `${result.stdout}${result.stderr}`, calls: log };
+function run(prismaExitCode: number, env: Record<string, string | undefined>) {
+  return runFixture("always", env, prismaExitCode);
 }
 
-function initThenSuccessStub() {
-  return `#!/bin/sh
-echo "prisma $*" >> "__CALLS__"
-case "$*" in
-  *db\\ execute*) exit 0 ;;
-  *migrate\\ resolve*) exit 0 ;;
-  *migrate\\ deploy*)
-    n=$(grep -c "migrate deploy" "__CALLS__" || true)
-    if [ "$n" -eq 1 ]; then
-      echo "Error: P3009" >&2
-      echo "The \\\`20261014193427_init\\\` migration started at 2026-10-15 10:32:25.619809 UTC failed" >&2
-      exit 1
-    fi
-    exit 0
-    ;;
-esac
-exit 1
-`;
-}
-
-function initMissingUserStub() {
-  return `#!/bin/sh
-echo "prisma $*" >> "__CALLS__"
-case "$*" in
-  *db\\ execute*) echo "missing User" >&2; exit 1 ;;
-  *migrate\\ deploy*)
-    echo "Error: P3009" >&2
-    echo "The \\\`20261014193427_init\\\` migration started at 2026-10-15 10:32:25.619809 UTC failed" >&2
-    exit 1
-    ;;
-esac
-exit 1
-`;
-}
-
-function duplicateColumnStub() {
-  return `#!/bin/sh
-echo "prisma $*" >> "__CALLS__"
-case "$*" in
-  *db\\ execute*) exit 0 ;;
-  *migrate\\ resolve*) exit 0 ;;
-  *migrate\\ deploy*)
-    n=$(grep -c "migrate deploy" "__CALLS__" || true)
-    if [ "$n" -eq 1 ]; then
-      echo "Error: P3009" >&2
-      echo "The \\\`20261014193427_init\\\` migration started at 2026-10-15 10:32:25.619809 UTC failed" >&2
-      exit 1
-    fi
-    if [ "$n" -eq 2 ]; then
-      echo "Error: P3018" >&2
-      echo "Migration name: 20261014195331_add_votes_and_proof_links" >&2
-      echo "Database error code: 42701" >&2
-      echo "ERROR: column \\"voteCount\\" of relation \\"Bug\\" already exists" >&2
-      exit 1
-    fi
-    exit 0
-    ;;
-esac
-exit 1
-`;
+function runStub(scenario: Exclude<StubScenario, "always">, env: Record<string, string | undefined>) {
+  return runFixture(scenario, env);
 }
 
 afterEach(() => {
@@ -174,7 +106,7 @@ describe("scripts/migrate.mjs exit code (#580)", () => {
   });
 
   it("records the failed init migration as applied when User already exists", () => {
-    const { status, calls, output } = runStub(initThenSuccessStub(), {
+    const { status, calls, output } = runStub("init-then-success", {
       NODE_ENV: "production",
       DATABASE_URL: DB,
     });
@@ -184,7 +116,7 @@ describe("scripts/migrate.mjs exit code (#580)", () => {
   });
 
   it("does not mark init applied when the User table is missing", () => {
-    const { status, calls } = runStub(initMissingUserStub(), {
+    const { status, calls } = runStub("init-missing-user", {
       NODE_ENV: "production",
       DATABASE_URL: DB,
     });
@@ -193,7 +125,7 @@ describe("scripts/migrate.mjs exit code (#580)", () => {
   });
 
   it("records a later migration applied when its objects already exist", () => {
-    const { status, calls } = runStub(duplicateColumnStub(), {
+    const { status, calls } = runStub("duplicate-column", {
       NODE_ENV: "production",
       DATABASE_URL: DB,
     });
