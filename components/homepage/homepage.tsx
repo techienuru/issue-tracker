@@ -1,10 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, useSyncExternalStore, type CSSProperties, type PointerEvent as ReactPointerEvent } from 'react';
+import { useEffect, useRef, useState, useSyncExternalStore, type AnimationEvent as ReactAnimationEvent, type CSSProperties } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useTheme, applyThemeClient } from '@/components/theme-toggle';
-import { WorkflowCarousel } from '@/components/homepage/workflow-carousel';
 
 type IconName =
   | 'arrow'
@@ -57,10 +56,9 @@ function BugIcon() {
   );
 }
 
-type BugFlight = { left: number; top: number; dx: number; dy: number };
+type HeadlineBugState = 'idle' | 'running' | 'done';
 
 const navItems = [
-  ['How it works', 'how-it-works'],
   ['Product', 'product'],
   ['Developers', 'developers'],
   ['Points', 'points'],
@@ -121,19 +119,34 @@ function getSystemDark() { return window.matchMedia('(prefers-color-scheme: dark
 
 function Homepage({ signedIn = false }: { signedIn?: boolean }) {
   const [menuOpen, setMenuOpen] = useState(false)
-  const [heroLaunched, setHeroLaunched] = useState(false);
-  const [bugFound, setBugFound] = useState(false);
-  const [bugFlight, setBugFlight] = useState<BugFlight | null>(null);
-  const [launchSignal, setLaunchSignal] = useState(0);
-  const [journeyStep, setJourneyStep] = useState(0);
-  const [theme, setTheme] = useTheme();
-  const heroRef = useRef<HTMLDivElement>(null);
+  const [headlineBugState, setHeadlineBugState] = useState<HeadlineBugState>('idle');
+  const [headlineBugReplay, setHeadlineBugReplay] = useState(false);
+  const [bugTravel, setBugTravel] = useState(0);
+  const headlineLineRef = useRef<HTMLSpanElement>(null);
   const headlineBugRef = useRef<HTMLButtonElement>(null);
-  const issueBugRef = useRef<HTMLSpanElement>(null);
-  const bugTimerRef = useRef<number | null>(null);
-  const scrollTimerRef = useRef<number | null>(null);
+  const [theme, setTheme] = useTheme();
   const systemDark = useSyncExternalStore(subscribeSystemTheme, getSystemDark, () => false);
   const darkMode = theme === 'dark' || (theme === 'system' && systemDark);
+
+  function startHeadlineBug() {
+    if (headlineBugState === 'running') return;
+
+    setHeadlineBugReplay(headlineBugState === 'done');
+    const line = headlineLineRef.current?.getBoundingClientRect();
+    const bug = headlineBugRef.current?.getBoundingClientRect();
+    const travel = line && bug ? Math.min(0, line.left - bug.left - bug.width - 8) : 0;
+    setBugTravel(travel);
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setHeadlineBugState('done');
+      return;
+    }
+    setHeadlineBugState('running');
+  }
+
+  function handleHeadlineBugAnimationEnd(event: ReactAnimationEvent<HTMLButtonElement>) {
+    if (event.target === event.currentTarget) setHeadlineBugState('done');
+  }
 
   useEffect(() => {
     // Reapply a device preference after hydration when no account/cookie pins it.
@@ -153,72 +166,8 @@ function Homepage({ signedIn = false }: { signedIn?: boolean }) {
     return () => { window.removeEventListener('resize', close); window.removeEventListener('keydown', escape); }
   }, [])
 
-  useEffect(() => () => {
-    if (scrollTimerRef.current !== null) window.clearTimeout(scrollTimerRef.current);
-    if (bugTimerRef.current !== null) window.clearTimeout(bugTimerRef.current);
-  }, []);
-
-  const handleMissionStep = useCallback((step: number) => {
-    setJourneyStep(step);
-  }, []);
-
-  function followIssue(event: ReactPointerEvent<HTMLDivElement>) {
-    if (event.pointerType !== 'mouse' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const bounds = event.currentTarget.getBoundingClientRect();
-    const x = ((event.clientX - bounds.left) / bounds.width - 0.5) * 14;
-    const y = ((event.clientY - bounds.top) / bounds.height - 0.5) * 10;
-    heroRef.current?.style.setProperty('--issue-x', `${x.toFixed(1)}px`);
-    heroRef.current?.style.setProperty('--issue-y', `${y.toFixed(1)}px`);
-  }
-
-  function resetIssuePosition() {
-    heroRef.current?.style.setProperty('--issue-x', '0px');
-    heroRef.current?.style.setProperty('--issue-y', '0px');
-  }
-
-  function launchIssueJourney() {
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    setHeroLaunched(false);
-    setJourneyStep(0);
-    const beginJourney = () => {
-      setHeroLaunched(true);
-      setLaunchSignal((signal) => signal + 1);
-    };
-    if (typeof window.requestAnimationFrame === 'function') window.requestAnimationFrame(beginJourney);
-    else beginJourney();
-    if (scrollTimerRef.current !== null) window.clearTimeout(scrollTimerRef.current);
-    scrollTimerRef.current = window.setTimeout(() => {
-      document.getElementById('how-it-works')?.scrollIntoView?.({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' });
-    }, reducedMotion ? 0 : 720);
-  }
-
-  function catchHeadlineBug() {
-    if (bugFound) return;
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const source = headlineBugRef.current?.getBoundingClientRect();
-    const destination = issueBugRef.current?.getBoundingClientRect();
-    const frame = heroRef.current?.getBoundingClientRect();
-    if (!reducedMotion && source && destination && frame) {
-      const sourceX = source.left + source.width / 2;
-      const sourceY = source.top + source.height / 2;
-      setBugFlight({
-        left: sourceX - frame.left - 16,
-        top: sourceY - frame.top - 16,
-        dx: destination.left + destination.width / 2 - sourceX,
-        dy: destination.top + destination.height / 2 - sourceY,
-      });
-    }
-    setBugFound(true);
-    if (bugTimerRef.current !== null) window.clearTimeout(bugTimerRef.current);
-    bugTimerRef.current = window.setTimeout(() => {
-      setBugFlight(null);
-      launchIssueJourney();
-      bugTimerRef.current = null;
-    }, reducedMotion ? 0 : 800);
-  }
-
-  const currentJourney = issueJourney[journeyStep] ?? issueJourney[0];
-  const visibleEvents = issueJourney.slice(0, journeyStep + 1).slice(-4);
+  const currentJourney = issueJourney[0];
+  const visibleEvents = issueJourney.slice(0, 1);
 
 
   return (
@@ -256,37 +205,16 @@ function Homepage({ signedIn = false }: { signedIn?: boolean }) {
 
       <section className="hero" id="main-content" tabIndex={-1}>
         <div
-          ref={heroRef}
           className="hero-frame"
-          data-journey={heroLaunched ? 'launched' : 'waiting'}
-          data-bug-found={bugFound}
+          data-bug-state={headlineBugState}
+          data-bug-replay={headlineBugReplay}
           style={{ background: 'transparent', borderColor: 'rgba(214, 223, 240, 0)', boxShadow: 'none' }}
-          onPointerMove={followIssue}
-          onPointerLeave={resetIssuePosition}
         >
           <div className="hero-grid" />
           <div className="hero-frame-top">
             <span>Human + AI workflows</span>
-            <a href="#how-it-works">Explore the product <span>↗</span></a>
+            <a href="#product">Explore the product <span>↗</span></a>
           </div>
-
-          <button className="hero-issue-card" type="button" onClick={launchIssueJourney} aria-label="Move issue 1847 forward">
-            <span ref={issueBugRef} className="hero-issue-bug" aria-hidden="true">
-              <BugIcon />
-            </span>
-            <span><small>#1847 · RUNAWAY ISSUE</small><strong>Login session expires too early</strong></span>
-            <i aria-hidden="true">Move me</i>
-          </button>
-
-          {bugFlight ? (
-            <span
-              className="headline-bug-flight"
-              aria-hidden="true"
-              style={{ left: bugFlight.left, top: bugFlight.top, '--bug-dx': `${bugFlight.dx}px`, '--bug-dy': `${bugFlight.dy}px` } as CSSProperties}
-            >
-              <BugIcon />
-            </span>
-          ) : null}
 
           <div className="hero-scouts" aria-hidden="true">
             {['OB', 'TR', 'CO'].map((agent) => <span key={agent}><i><b /><b /></i><small>{agent}</small></span>)}
@@ -295,22 +223,36 @@ function Homepage({ signedIn = false }: { signedIn?: boolean }) {
           <div className="hero-content">
             <span className="hero-kicker">Collaborative software delivery</span>
             <h1 className="hero-title" aria-label="Move every issue forward with your agents">
-              <span className="hero-title-small">
+              <span className="hero-title-small" ref={headlineLineRef}>
                 Move every{' '}
                 <span className="hero-title-issue">
                   iss
-                  <button
-                    ref={headlineBugRef}
-                    className="headline-bug-letter"
-                    type="button"
-                    onClick={bugFound ? launchIssueJourney : catchHeadlineBug}
-                    aria-label={bugFound ? 'Replay the issue journey' : 'Catch the bug in the headline'}
-                    title={bugFound ? 'Replay the journey' : 'Catch the bug'}
-                  >
+                  <span className="headline-bug-slot">
                     <span aria-hidden="true">u</span>
-                    <span className="headline-bug-mark" aria-hidden="true"><BugIcon /></span>
-                  </button>
+                    <button
+                      ref={headlineBugRef}
+                      className="headline-bug-letter"
+                      type="button"
+                      onClick={startHeadlineBug}
+                      onAnimationEnd={handleHeadlineBugAnimationEnd}
+                      aria-label={headlineBugState === 'running' ? 'Bug is moving across the headline' : headlineBugState === 'done' ? 'Replay the headline animation' : 'Catch the bug in the headline'}
+                      title={headlineBugState === 'done' ? 'Replay the headline animation' : 'Catch the bug'}
+                      disabled={headlineBugState === 'running'}
+                      style={{ '--bug-travel': `${bugTravel}px` } as CSSProperties}
+                    >
+                      <span className="headline-bug-mark" aria-hidden="true"><BugIcon /></span>
+                      <span className="headline-bug-runner" aria-hidden="true"><BugIcon /></span>
+                    </button>
+                  </span>
                   e
+                  {headlineBugState !== 'idle' ? (
+                    <span className="headline-bug-caption" aria-live="polite" data-state={headlineBugState} data-replay={headlineBugReplay}>
+                      <span className="headline-bug-caption-text">Bug found. Issue moving.</span>
+                      {headlineBugState === 'done' ? (
+                        <button className="headline-bug-replay" type="button" onClick={startHeadlineBug}>Replay it</button>
+                      ) : null}
+                    </span>
+                  ) : null}
                 </span>
               </span>
               <span className="hero-title-word">
@@ -328,9 +270,7 @@ function Homepage({ signedIn = false }: { signedIn?: boolean }) {
             <p className="hero-copy">Agents discover issues, propose a plan, deliver fixes, and validate work on behalf of your team. Every action is permissioned, attributable, and under human control.</p>
             <div className="hero-actions">
               <Link className="button button-large" href="/login">Get started free <Icon name="arrow" size={17} /></Link>
-              <button className="hero-text-link hero-journey-trigger" type="button" onClick={bugFound ? launchIssueJourney : catchHeadlineBug}>
-                {bugFound ? 'Replay the journey' : 'Find the bug'}
-              </button>
+              <a className="hero-text-link hero-journey-trigger" href="#product">Explore the product</a>
             </div>
           </div>
 
@@ -362,15 +302,6 @@ function Homepage({ signedIn = false }: { signedIn?: boolean }) {
         </div>
       </section>
 
-      <section className="section workflow" id="how-it-works">
-        <div className="section-heading">
-          <span className="section-kicker">One idea, six visible work areas</span>
-          <h2>Watch an idea complete<br />the Ziki Mission</h2>
-          <p>Follow the glowing idea as specialized agents discover, check, build, test, and safely launch it.</p>
-        </div>
-        <WorkflowCarousel signedIn={signedIn} launchSignal={launchSignal} onStepChange={handleMissionStep} />
-      </section>
-
       <section className="section product-section" id="product" aria-labelledby="product-title">
         <div className="product-copy">
           <span className="section-kicker">See the real product</span>
@@ -384,7 +315,7 @@ function Homepage({ signedIn = false }: { signedIn?: boolean }) {
         </div>
         <figure className="product-mockup" aria-labelledby="product-mockup-caption">
           <figcaption id="product-mockup-caption">Example issue page</figcaption>
-          <div className="mockup-window" data-journey-step={journeyStep}>
+          <div className="mockup-window" data-journey-step="0">
             <div className="mockup-topbar">
               <span className="mockup-dots"><i /><i /><i /></span>
               <span>Acme / Web app</span>
@@ -401,7 +332,7 @@ function Homepage({ signedIn = false }: { signedIn?: boolean }) {
               <div className="mockup-issue">
                 <div className="mockup-breadcrumb"><span>Issues</span><i>/</i><b>#1847</b></div>
                 <div className="mockup-journey-strip" aria-label={`Issue journey: ${currentJourney.status}`}>
-                  {issueJourney.map((stage, index) => <i key={stage.status} data-reached={index <= journeyStep} data-current={index === journeyStep} />)}
+                  {issueJourney.map((stage, index) => <i key={stage.status} data-reached={index === 0} data-current={index === 0} />)}
                 </div>
                 <div className="mockup-heading">
                   <div><span className="mockup-type">BUG</span><h3>Login session expires too early</h3></div>
@@ -468,7 +399,7 @@ function Homepage({ signedIn = false }: { signedIn?: boolean }) {
             <div className="leader-row"><b>01</b><span className="leader-avatar blue"><Icon name="target" size={14} /></span><div><strong>Report useful work</strong><small>The issue must be confirmed as real and original.</small></div></div>
             <div className="leader-row"><b>02</b><span className="leader-avatar green"><Icon name="code" size={14} /></span><div><strong>Deliver a verified fix</strong><small>The fix must pass review and reach the merge gate.</small></div></div>
             <div className="leader-row"><b>03</b><span className="leader-avatar violet"><Icon name="eye" size={14} /></span><div><strong>Complete an independent review</strong><small>The review must be eligible and supported by evidence.</small></div></div>
-            <div className={`points-award ${journeyStep === issueJourney.length - 1 ? 'is-awarded' : ''}`}><span><Icon name="shield" /></span><div><small>{journeyStep === issueJourney.length - 1 ? 'Mission complete' : 'Simple rule'}</small><b>{journeyStep === issueJourney.length - 1 ? '+30 points added for accepted work.' : 'Points are added only after the work is accepted.'}</b></div></div>
+            <div className="points-award"><span><Icon name="shield" /></span><div><small>Simple rule</small><b>Points are added only after the work is accepted.</b></div></div>
           </div>
         </div>
       </section>
@@ -509,7 +440,7 @@ function Homepage({ signedIn = false }: { signedIn?: boolean }) {
 
       <section className="closing-cta">
         <div className="cta-mark"><Image src="/homepage/ziki-mark.svg" width={35} height={29} alt="" /></div>
-        <h2>{journeyStep === issueJourney.length - 1 ? <>That issue moved forward.<br />Ready to move yours?</> : <>Ready to turn issues<br />into progress?</>}</h2>
+        <h2>Ready to turn issues<br />into progress?</h2>
         <p>Pair an agent, connect your project, and keep every contribution visible from report to merge.</p>
         <Link className="button button-large" href="/login">Get started with Ziki <Icon name="arrow" size={17} /></Link>
         <span>Human-led workflows. Attributable contributions.</span>
@@ -517,7 +448,7 @@ function Homepage({ signedIn = false }: { signedIn?: boolean }) {
 
       <footer>
         <div className="footer-brand"><a className="brand" href="#top"><Image src="/homepage/ziki-mark.svg" width={35} height={29} alt="" /><span>ziki</span></a><p>Issues move forward when people and agents work together.</p></div>
-        <div className="footer-links"><div><b>Product</b><a href="#what-is-ziki">What is Ziki?</a><a href="#how-it-works">How it works</a><a href="#product">Product tour</a><a href="#points">Points</a><a href="#faq">FAQ</a></div><div><b>Developers</b><a href="/llms.txt">API specification (machine-readable)</a></div></div>
+        <div className="footer-links"><div><b>Product</b><a href="#what-is-ziki">What is Ziki?</a><a href="#product">Product tour</a><a href="#points">Points</a><a href="#faq">FAQ</a></div><div><b>Developers</b><a href="/llms.txt">API specification (machine-readable)</a></div></div>
         <div className="footer-bottom"><span>© {new Date().getFullYear()} Ziki Issues. All rights reserved.</span><span>Human-led. AI-assisted.</span></div>
       </footer>
     </main>

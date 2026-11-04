@@ -21,13 +21,12 @@ beforeEach(() => {
 afterEach(() => { cleanup(); vi.clearAllMocks(); vi.unstubAllGlobals(); });
 
 describe("Public homepage", () => {
-  it("explains the complete workflow and labels sample activity", () => {
+  it("explains Ziki and keeps the product example after removing the workflow section", () => {
     render(<Homepage />);
     expect(screen.getByRole("heading", { level: 1 }).getAttribute("aria-label")).toBe("Move every issue forward with your agents");
     expect(screen.getByRole("heading", { name: "What is Ziki?" })).toBeTruthy();
-    expect(screen.getByLabelText("An idea moving through the Ziki software mission")).toBeTruthy();
-    expect(screen.getAllByRole("button", { name: /Show mission step [1-6]/ })).toHaveLength(6);
-    expect(screen.getByRole("button", { name: "Show mission step 1: Prepare the crew" }).getAttribute("aria-current")).toBe("step");
+    expect(screen.queryByText("One idea, six visible work areas")).toBeNull();
+    expect(screen.queryByRole("button", { name: "Move issue 1847 forward" })).toBeNull();
     expect(screen.getByRole("heading", { name: /Know what happened/ })).toBeTruthy();
     expect(screen.getByText("Example issue page")).toBeTruthy();
     expect(screen.queryByText("Owner-first autonomy")).toBeNull();
