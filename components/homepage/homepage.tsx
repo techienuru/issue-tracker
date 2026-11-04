@@ -120,10 +120,10 @@ function getSystemDark() { return window.matchMedia('(prefers-color-scheme: dark
 function Homepage({ signedIn = false }: { signedIn?: boolean }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const [headlineBugState, setHeadlineBugState] = useState<HeadlineBugState>('idle');
-  const [headlineBugReplay, setHeadlineBugReplay] = useState(false);
-  const [bugTravel, setBugTravel] = useState(0);
-  const headlineLineRef = useRef<HTMLSpanElement>(null);
+  const [chaseStyle, setChaseStyle] = useState<CSSProperties>({});
+  const heroFrameRef = useRef<HTMLDivElement>(null);
   const headlineBugRef = useRef<HTMLButtonElement>(null);
+  const heroScoutRef = useRef<HTMLSpanElement>(null);
   const [theme, setTheme] = useTheme();
   const systemDark = useSyncExternalStore(subscribeSystemTheme, getSystemDark, () => false);
   const darkMode = theme === 'dark' || (theme === 'system' && systemDark);
@@ -131,11 +131,38 @@ function Homepage({ signedIn = false }: { signedIn?: boolean }) {
   function startHeadlineBug() {
     if (headlineBugState === 'running') return;
 
-    setHeadlineBugReplay(headlineBugState === 'done');
-    const line = headlineLineRef.current?.getBoundingClientRect();
+    const frame = heroFrameRef.current?.getBoundingClientRect();
     const bug = headlineBugRef.current?.getBoundingClientRect();
-    const travel = line && bug ? Math.min(0, line.left - bug.left - bug.width - 8) : 0;
-    setBugTravel(travel);
+    const scout = heroScoutRef.current?.getBoundingClientRect();
+    if (!frame || !bug || !scout) return;
+
+    const bugX = bug.left + bug.width / 2 - frame.left;
+    const bugY = bug.top + bug.height / 2 - frame.top;
+    const scoutX = scout.left + scout.width / 2 - frame.left;
+    const scoutY = scout.top + scout.height / 2 - frame.top;
+    const mobile = window.matchMedia('(max-width: 720px)').matches;
+    const scoutScale = mobile ? .85 : 1;
+    const catchX = frame.width * .72;
+    const catchY = frame.height * (mobile ? .76 : .62);
+    setChaseStyle({
+      '--bug-x': `${bugX}px`,
+      '--bug-y': `${bugY}px`,
+      '--bug-turn-one-x': `${frame.width * .4 - bugX}px`,
+      '--bug-turn-one-y': `${frame.height * .28 - bugY}px`,
+      '--bug-turn-two-x': `${frame.width * .86 - bugX}px`,
+      '--bug-turn-two-y': `${frame.height * .42 - bugY}px`,
+      '--bug-catch-x': `${catchX - bugX}px`,
+      '--bug-catch-y': `${catchY - bugY}px`,
+      '--scout-turn-x': `${(frame.width * .44 - scoutX) / scoutScale}px`,
+      '--scout-turn-y': `${(frame.height * (mobile ? .76 : .67) - scoutY) / scoutScale}px`,
+      '--scout-catch-x': `${(catchX - scoutX) / scoutScale}px`,
+      '--scout-catch-y': `${(catchY - scoutY) / scoutScale}px`,
+      '--scout-return-x': `${(bugX - scoutX) / scoutScale}px`,
+      '--scout-return-y': `${(bugY - scoutY) / scoutScale}px`,
+      '--catch-x': `${catchX}px`,
+      '--catch-y': `${catchY}px`,
+      '--catch-glow-y': mobile ? '76%' : '62%',
+    } as CSSProperties);
 
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       setHeadlineBugState('done');
@@ -144,9 +171,15 @@ function Homepage({ signedIn = false }: { signedIn?: boolean }) {
     setHeadlineBugState('running');
   }
 
-  function handleHeadlineBugAnimationEnd(event: ReactAnimationEvent<HTMLButtonElement>) {
-    if (event.target === event.currentTarget) setHeadlineBugState('done');
+  function handleHeroScoutAnimationEnd(event: ReactAnimationEvent<HTMLSpanElement>) {
+    if (event.target === event.currentTarget && event.animationName === 'hero-agent-chase') setHeadlineBugState('done');
   }
+
+  useEffect(() => {
+    if (headlineBugState !== 'running') return;
+    const timer = window.setTimeout(() => setHeadlineBugState('done'), 5600);
+    return () => window.clearTimeout(timer);
+  }, [headlineBugState]);
 
   useEffect(() => {
     // Reapply a device preference after hydration when no account/cookie pins it.
@@ -205,10 +238,10 @@ function Homepage({ signedIn = false }: { signedIn?: boolean }) {
 
       <section className="hero" id="main-content" tabIndex={-1}>
         <div
+          ref={heroFrameRef}
           className="hero-frame"
           data-bug-state={headlineBugState}
-          data-bug-replay={headlineBugReplay}
-          style={{ background: 'transparent', borderColor: 'rgba(214, 223, 240, 0)', boxShadow: 'none' }}
+          style={{ background: 'transparent', borderColor: 'rgba(214, 223, 240, 0)', boxShadow: 'none', ...chaseStyle }}
         >
           <div className="hero-grid" />
           <div className="hero-frame-top">
@@ -217,42 +250,41 @@ function Homepage({ signedIn = false }: { signedIn?: boolean }) {
           </div>
 
           <div className="hero-scouts" aria-hidden="true">
-            {['OB', 'TR', 'CO'].map((agent) => <span key={agent}><i><b /><b /></i><small>{agent}</small></span>)}
+            {['OB', 'TR', 'CO'].map((agent, index) => <span key={agent} ref={index === 0 ? heroScoutRef : undefined} onAnimationEnd={index === 0 ? handleHeroScoutAnimationEnd : undefined}><i><b /><b /></i><small>{agent}</small>{index === 0 ? <><span className="hero-scout-lens" /><span className="hero-scout-carry">u</span><span className="hero-scout-catch"><BugIcon /></span></> : null}</span>)}
           </div>
+          {headlineBugState === 'running' ? <span className="hero-chase-bug" aria-hidden="true"><BugIcon /></span> : null}
+          {headlineBugState === 'done' ? <button className="hero-chase-release" type="button" onClick={startHeadlineBug}>Release bug</button> : null}
+          <span className="sr-only" role="status">{headlineBugState === 'running' ? 'An agent is chasing the bug.' : headlineBugState === 'done' ? 'The agent caught the bug and returned the letter.' : ''}</span>
 
           <div className="hero-content">
             <span className="hero-kicker">Collaborative software delivery</span>
             <h1 className="hero-title" aria-label="Move every issue forward with your agents">
-              <span className="hero-title-small" ref={headlineLineRef}>
+              <span className="hero-title-small">
                 Move every{' '}
                 <span className="hero-title-issue">
                   iss
                   <span className="headline-bug-slot">
-                    <span aria-hidden="true">u</span>
+                    <span className="headline-bug-u" aria-hidden="true">
+                      u
+                      <span className="headline-bug-legs">
+                        <span><i /><i /><i /></span>
+                        <span><i /><i /><i /></span>
+                      </span>
+                    </span>
                     <button
                       ref={headlineBugRef}
                       className="headline-bug-letter"
                       type="button"
                       onClick={startHeadlineBug}
-                      onAnimationEnd={handleHeadlineBugAnimationEnd}
-                      aria-label={headlineBugState === 'running' ? 'Bug is moving across the headline' : headlineBugState === 'done' ? 'Replay the headline animation' : 'Catch the bug in the headline'}
-                      title={headlineBugState === 'done' ? 'Replay the headline animation' : 'Catch the bug'}
-                      disabled={headlineBugState === 'running'}
-                      style={{ '--bug-travel': `${bugTravel}px` } as CSSProperties}
+                      aria-label="Catch the bug in the headline"
+                      title="Catch the bug"
+                      disabled={headlineBugState !== 'idle'}
                     >
                       <span className="headline-bug-mark" aria-hidden="true"><BugIcon /></span>
-                      <span className="headline-bug-runner" aria-hidden="true"><BugIcon /></span>
+                      <span className="headline-bug-hint" aria-hidden="true">Catch me</span>
                     </button>
                   </span>
                   e
-                  {headlineBugState !== 'idle' ? (
-                    <span className="headline-bug-caption" aria-live="polite" data-state={headlineBugState} data-replay={headlineBugReplay}>
-                      <span className="headline-bug-caption-text">Bug found. Issue moving.</span>
-                      {headlineBugState === 'done' ? (
-                        <button className="headline-bug-replay" type="button" onClick={startHeadlineBug}>Replay it</button>
-                      ) : null}
-                    </span>
-                  ) : null}
                 </span>
               </span>
               <span className="hero-title-word">

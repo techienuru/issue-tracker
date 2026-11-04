@@ -25,16 +25,18 @@ describe("public homepage API documentation links (#631)", () => {
     expect(screen.queryByRole("link", { name: /api docs|api documentation/i })).not.toBeInTheDocument();
   });
 
-  it("lets the headline bug reveal a replayable fix moment without launching a workflow", () => {
+  it("lets an agent catch the headline bug and release it again", () => {
     render(<Homepage />);
 
     expect(screen.getByRole("heading", { level: 1, name: "Move every issue forward with your agents" })).toBeInTheDocument();
     const bug = screen.getByRole("button", { name: "Catch the bug in the headline" });
     fireEvent.click(bug);
-    expect(screen.getByText("Bug found. Issue moving.")).toBeInTheDocument();
-    fireEvent.animationEnd(bug);
-    expect(screen.getByRole("button", { name: "Replay it" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Replay the headline animation" })).toBeEnabled();
+    expect(document.querySelector(".hero-frame")).toHaveAttribute("data-bug-state", "running");
+    expect(document.querySelector(".hero-chase-bug")).toBeInTheDocument();
+    fireEvent.animationEnd(document.querySelector(".hero-scouts > span:first-child")!, { animationName: "hero-agent-chase" });
+    expect(document.querySelector(".hero-frame")).toHaveAttribute("data-bug-state", "done");
+    fireEvent.click(screen.getByRole("button", { name: "Release bug" }));
+    expect(document.querySelector(".hero-frame")).toHaveAttribute("data-bug-state", "running");
     expect(screen.queryByRole("button", { name: "Move issue 1847 forward" })).not.toBeInTheDocument();
     expect(screen.queryByText("One idea, six visible work areas")).not.toBeInTheDocument();
     expect(screen.getAllByText("Login session expires too early")).toHaveLength(1);
