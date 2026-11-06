@@ -90,6 +90,37 @@
 .ziki-homepage .section-heading h2, .ziki-homepage .control-copy h2, .ziki-homepage .points-copy h2, .ziki-homepage .closing-cta h2 { font-size: clamp(37px, 4.4vw, 55px); font-weight: 500; letter-spacing: -.05em; line-height: 1.04; }
 .ziki-homepage .section-heading p { color: var(--muted); font-size: 16px; line-height: 1.6; margin: 20px auto 0; max-width: 610px; }
 .ziki-homepage .workflow-grid { display: grid; gap: 18px; grid-template-columns: repeat(3, 1fr); }
+.ziki-homepage .audiences { padding-bottom: 50px; }
+.ziki-homepage .audience-grid { display: grid; gap: 18px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.ziki-homepage .audience-card { min-height: 0; padding: 28px; }
+.ziki-homepage .audience-card .lifecycle-icon { margin-top: 0; }
+.ziki-homepage .audience-card > p { max-width: 48ch; }
+.ziki-homepage .audience-card > .button { margin-top: 28px; width: fit-content; }
+.ziki-homepage .walkthrough { padding-bottom: 70px; padding-top: 70px; }
+.ziki-homepage .walkthrough-shell { border: 1px solid var(--line); border-radius: 18px; padding: 28px; }
+.ziki-homepage .walkthrough-top { align-items: center; display: flex; gap: 24px; justify-content: space-between; margin-bottom: 28px; }
+.ziki-homepage .walkthrough-top h3 { font-size: 18px; margin-top: 8px; }
+.ziki-homepage .walkthrough-label { color: var(--green); font-size: 12px; font-weight: 500; }
+.ziki-homepage .walkthrough-switch { border: 1px solid var(--line); border-radius: var(--button-radius); display: flex; gap: 4px; padding: 4px; }
+.ziki-homepage .walkthrough-switch button { background: transparent; border: 0; border-radius: var(--button-radius); color: var(--ink); padding: 10px 16px; white-space: nowrap; }
+.ziki-homepage .walkthrough-switch button[aria-pressed='true'] { background: var(--green-soft); color: var(--green); }
+.ziki-homepage .walkthrough-layout { display: grid; gap: 18px; grid-template-columns: 230px minmax(0, 1fr); }
+.ziki-homepage .walkthrough-steps { display: grid; gap: 10px; list-style: none; margin: 0; padding: 0; }
+.ziki-homepage .walkthrough-steps button { align-items: center; background: var(--white); border: 1px solid var(--line); border-radius: 12px; color: var(--ink); display: flex; gap: 12px; padding: 14px; text-align: left; width: 100%; }
+.ziki-homepage .walkthrough-steps button[aria-current='step'] { background: var(--green-soft); border-color: var(--green); }
+.ziki-homepage .walkthrough-steps button span { align-items: center; border: 1px solid var(--line); border-radius: 50%; color: var(--green); display: flex; flex: none; height: 28px; justify-content: center; width: 28px; }
+.ziki-homepage .walkthrough-detail { background: var(--surface); border-radius: 18px; display: flex; flex-direction: column; min-height: 320px; padding: 30px; }
+.ziki-homepage .walkthrough-detail h4 { font-size: 18px; margin: 14px 0 10px; }
+.ziki-homepage .walkthrough-detail > p { color: var(--muted); line-height: 1.6; max-width: 60ch; }
+.ziki-homepage .walkthrough-example { border-top: 1px solid var(--line); margin-top: 24px; padding-top: 18px; }
+.ziki-homepage .walkthrough-example span { color: var(--muted); font-size: 12px; }
+.ziki-homepage .walkthrough-example p { margin-top: 8px; }
+.ziki-homepage .walkthrough-actions { align-items: center; display: flex; flex-wrap: wrap; gap: 16px; margin-top: auto; padding-top: 28px; }
+.ziki-homepage .walkthrough-actions .button { max-width: 100%; text-align: center; white-space: normal; }
+.ziki-homepage .walkthrough-back { background: none; border: 0; color: var(--ink); padding: 10px 0; }
+.ziki-homepage .walkthrough-back:hover { text-decoration: underline; text-underline-offset: 4px; }
+.ziki-homepage .walkthrough-note { color: var(--muted); font-size: 12px; margin-top: 18px; }
+.ziki-homepage .paths { padding-top: 70px; }
 .ziki-homepage .workflow-card { border: 1px solid var(--line); border-radius: 18px; padding: 12px 12px 28px; position: relative; transition: border-color .25s ease, box-shadow .25s ease, transform .25s ease; }
 .ziki-homepage .workflow-card:hover { border-color: #cbdaf4; box-shadow: 0 22px 55px rgba(11,23,51,.08); transform: translateY(-5px); }
 .ziki-homepage .step-number { align-items: center; background: white; border: 1px solid var(--line); border-radius: 50%; color: var(--green); display: flex; font-family: var(--font-inter), sans-serif; font-size: 10px; font-weight: 800; height: 35px; justify-content: center; left: 24px; position: absolute; top: 24px; width: 35px; z-index: 2; }
@@ -239,6 +270,15 @@
 }
 
 @media (max-width: 720px) {
+  .ziki-homepage .section.audiences { padding-bottom: 35px; }
+  .ziki-homepage .audience-grid { grid-template-columns: 1fr; }
+  .ziki-homepage .section.walkthrough { padding-bottom: 60px; padding-top: 60px; }
+  .ziki-homepage .walkthrough-shell { padding: 18px; }
+  .ziki-homepage .walkthrough-top { align-items: flex-start; flex-direction: column; }
+  .ziki-homepage .walkthrough-layout { grid-template-columns: 1fr; }
+  .ziki-homepage .walkthrough-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ziki-homepage .walkthrough-detail { min-height: 0; padding: 22px; }
+  .ziki-homepage .section.paths { padding-top: 60px; }
   .ziki-homepage .owner { display: none; }
   .ziki-homepage .section { padding: 95px 20px; }
   .ziki-homepage .section-heading h2, .ziki-homepage .control-copy h2, .ziki-homepage .points-copy h2, .ziki-homepage .closing-cta h2 { letter-spacing: -.045em; }
