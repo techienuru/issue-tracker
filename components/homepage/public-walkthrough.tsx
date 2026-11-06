@@ -111,7 +111,6 @@ export function PublicWalkthrough({ signedIn }: { signedIn: boolean }) {
           </div>
         </div>
       </div>
-      <p className="walkthrough-note">This is a sample task. You can explore it without signing in.</p>
     </div>
   );
 }

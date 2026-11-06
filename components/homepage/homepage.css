@@ -95,8 +95,13 @@
 .ziki-homepage .audience-card { min-height: 0; padding: 28px; }
 .ziki-homepage .audience-card .lifecycle-icon { margin-top: 0; }
 .ziki-homepage .audience-card > p { max-width: 48ch; }
+.ziki-homepage .audience-card > .audience-first-step { border-top: 1px solid var(--line); margin-top: 20px; padding-top: 18px; }
+.ziki-homepage .audience-first-step strong { color: var(--ink); }
 .ziki-homepage .audience-card > .button { margin-top: 28px; width: fit-content; }
 .ziki-homepage .walkthrough { padding-bottom: 70px; padding-top: 70px; }
+.ziki-homepage .trust { padding-bottom: 70px; padding-top: 70px; }
+.ziki-homepage .trust-card { min-height: 0; }
+.ziki-homepage .trust-card .lifecycle-icon { margin-top: 0; }
 .ziki-homepage .walkthrough-shell { border: 1px solid var(--line); border-radius: 18px; padding: 28px; }
 .ziki-homepage .walkthrough-top { align-items: center; display: flex; gap: 24px; justify-content: space-between; margin-bottom: 28px; }
 .ziki-homepage .walkthrough-top h3 { font-size: 18px; margin-top: 8px; }
@@ -120,7 +125,6 @@
 .ziki-homepage .walkthrough-back { background: none; border: 0; color: var(--ink); padding: 10px 0; }
 .ziki-homepage .walkthrough-back:hover { text-decoration: underline; text-underline-offset: 4px; }
 .ziki-homepage .walkthrough-note { color: var(--muted); font-size: 12px; margin-top: 18px; }
-.ziki-homepage .paths { padding-top: 70px; }
 .ziki-homepage .workflow-card { border: 1px solid var(--line); border-radius: 18px; padding: 12px 12px 28px; position: relative; transition: border-color .25s ease, box-shadow .25s ease, transform .25s ease; }
 .ziki-homepage .workflow-card:hover { border-color: #cbdaf4; box-shadow: 0 22px 55px rgba(11,23,51,.08); transform: translateY(-5px); }
 .ziki-homepage .step-number { align-items: center; background: white; border: 1px solid var(--line); border-radius: 50%; color: var(--green); display: flex; font-family: var(--font-inter), sans-serif; font-size: 10px; font-weight: 800; height: 35px; justify-content: center; left: 24px; position: absolute; top: 24px; width: 35px; z-index: 2; }
@@ -278,7 +282,6 @@
   .ziki-homepage .walkthrough-layout { grid-template-columns: 1fr; }
   .ziki-homepage .walkthrough-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .ziki-homepage .walkthrough-detail { min-height: 0; padding: 22px; }
-  .ziki-homepage .section.paths { padding-top: 60px; }
   .ziki-homepage .owner { display: none; }
   .ziki-homepage .section { padding: 95px 20px; }
   .ziki-homepage .section-heading h2, .ziki-homepage .control-copy h2, .ziki-homepage .points-copy h2, .ziki-homepage .closing-cta h2 { letter-spacing: -.045em; }
@@ -535,16 +538,6 @@
 .ziki-homepage .th-page .th-title { font-size: clamp(38px, 4.8vw, 66px); }
 .ziki-homepage .th-kicker { color: rgba(255,255,255,.85); display: block; font-family: var(--font-geist-mono), ui-monospace, monospace; font-size: 12px; letter-spacing: .08em; margin-bottom: 18px; text-transform: uppercase; }
 
-/* Homepage: three ways in */
-.ziki-homepage .paths-grid { display: grid; gap: 18px; grid-template-columns: repeat(3, 1fr); }
-.ziki-homepage .path-card { display: flex; flex-direction: column; padding: 26px 24px 24px; }
-.ziki-homepage .path-card .lifecycle-icon { margin: 0 0 18px; }
-.ziki-homepage .path-kicker { color: var(--green); font-family: var(--font-geist-mono), ui-monospace, monospace; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; }
-.ziki-homepage .path-card h3 { font-size: 20px; margin: 10px 0 10px; }
-.ziki-homepage .path-card p { color: var(--muted); font-size: 14px; line-height: 1.6; margin: 0; }
-.ziki-homepage .path-cta { align-items: center; display: inline-flex; font-size: 14px; font-weight: 700; gap: 6px; margin-top: auto; padding-top: 22px; }
-.ziki-homepage .path-card:hover .path-cta { color: var(--green); }
-
 /* How it works: status track */
 .ziki-homepage .status-section { padding-top: 40px; }
 .ziki-homepage .status-track { counter-reset: status; display: grid; gap: 12px; grid-template-columns: repeat(5, 1fr); list-style: none; margin: 0; padding: 0; }
@@ -569,7 +562,6 @@
 .ziki-homepage .closing-cta .cta-pair .button { margin-top: 0; }
 
 @media (max-width: 900px) {
-  .ziki-homepage .paths-grid { grid-template-columns: 1fr; }
   .ziki-homepage .status-track { grid-template-columns: 1fr; }
   .ziki-homepage .status-track li:not(:last-child)::after { bottom: -15px; content: '↓'; right: 50%; top: auto; transform: translateX(50%); }
   .ziki-homepage .join-grid { grid-template-columns: repeat(2, 1fr); }
