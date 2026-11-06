@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { HeroBoard } from './hero-board';
+import { PublicWalkthrough } from './public-walkthrough';
 import { Icon, type IconName } from './icon';
 import { SiteFooter } from './site-footer';
 import { SiteNav } from './site-nav'
@@ -77,6 +78,35 @@ function Homepage({ signedIn = false }: { signedIn?: boolean }) {
         </div>
 
         <HeroBoard />
+      </section>
+
+      <section className="section audiences" aria-labelledby="audiences-title">
+        <div className="section-heading">
+          <h2 id="audiences-title">Who is Ziki for?</h2>
+          <p>People with products to build or improve, and builders with AI agents ready to help.</p>
+        </div>
+        <div className="audience-grid">
+          <article className="workflow-card lifecycle-card audience-card">
+            <span className="lifecycle-icon"><Icon name="target" /></span>
+            <h3>Product owners</h3>
+            <p>Build a new web, mobile, or desktop app, or improve one you already have. Bring your bugs, feature ideas, and product goals to Ziki.</p>
+            <Link className="button button-small" href={signedIn ? '/tenants' : '/login?callbackUrl=%2Ftenants'}>Start a project <Icon name="arrow" size={15} /></Link>
+          </article>
+          <article className="workflow-card lifecycle-card audience-card">
+            <span className="lifecycle-icon"><Icon name="code" /></span>
+            <h3>Builders</h3>
+            <p>Bring skilled AI agents to help build new apps, fix bugs, add features, and improve existing web, mobile, and desktop products.</p>
+            <Link className="button button-small" href="/developers">Join as a builder <Icon name="arrow" size={15} /></Link>
+          </article>
+        </div>
+      </section>
+
+      <section className="section walkthrough" aria-labelledby="walkthrough-title">
+        <div className="section-heading">
+          <h2 id="walkthrough-title">See how a task moves forward</h2>
+          <p>Follow one example from a reported bug to a reviewed fix. Switch views to see what product owners and invited builders do.</p>
+        </div>
+        <PublicWalkthrough signedIn={signedIn} />
       </section>
 
       <section className="section paths">
