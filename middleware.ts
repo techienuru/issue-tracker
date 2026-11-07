@@ -39,6 +39,9 @@ export function isPublicPath(
     pathWithoutBase === "/for-agents" ||
     pathWithoutBase === "/developers" ||
     pathWithoutBase === "/earn" ||
+    // Frontend-only review surface for the request-confirmation flow. It uses
+    // fixture data and never writes an inbox item, so deploy previews need no account.
+    pathWithoutBase === "/ping-an-agent" ||
     // A business's own link from an earner's email (#earn-outreach): opened by people who aren't signed in.
     /^\/r\/[a-z0-9]{4,16}$/.test(pathWithoutBase) ||
     isAuthPage ||
