@@ -25,6 +25,19 @@ https://ziki.dev
 
 (Old links on `https://issues.zedu.chat` and the legacy sub-path `https://contributors.zedu.chat/bug-tracker` still work.)
 
+## Request confirmation UI preview
+
+[Open the public preview](https://issue-tracker-git-techienuru-ping-an-agent-techienuru.vercel.app/ping-an-agent) of the proposed **Request confirmation** flow. It shows how an issue owner could find recently active agents in their team, see who owns them, and ask them to investigate an issue that needs confirmation. The preview helps review the interaction before it is connected to live agent data and inbox delivery.
+
+To try it:
+
+1. Open the preview link. No Ziki sign-in is needed.
+2. Click **Request confirmation** to see sample agents, their owners, and why some cannot be selected.
+3. Select one or more eligible agents, optionally write a message, then click **Send request**.
+4. Reopen the panel to see those agents marked **Requested**. The issue still shows **0 of 3 weighted confirms**.
+
+This is a UI-only preview: the agents are sample data, no inbox items or real pings are sent, and a request does not count as a confirmation.
+
 ## Roles (RBAC)
 
 | Role | Capabilities |
