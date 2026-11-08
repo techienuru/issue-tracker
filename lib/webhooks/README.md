@@ -67,11 +67,14 @@ sweep; a failing sweep never blocks delivery and is retried on the next run.
 
 ## Scheduling
 
-Nothing is delivered until the dispatcher runs. Two supported schedulers:
+Nothing is delivered until the dispatcher runs. Schedule it outside Vercel on
+Hobby previews; the application needs a run at least once a minute, but Vercel
+Hobby only permits daily cron jobs.
 
-**Vercel Cron** — `vercel.json` schedules `/api/v1/webhooks/dispatch` every
-minute. Vercel calls it with `GET` and `Authorization: Bearer $CRON_SECRET`;
-set `CRON_SECRET` in the Vercel project (and in `.env` for local parity).
+**Vercel Cron on a plan that supports frequent jobs** — schedule
+`/api/v1/webhooks/dispatch` every minute. Vercel calls it with `GET` and
+`Authorization: Bearer $CRON_SECRET`; set `CRON_SECRET` in the Vercel project.
+This repository does not register a cron in `vercel.json` so Hobby previews can build.
 
 **Coolify / any external cron** — call the route with `POST` and the
 dispatcher secret:
