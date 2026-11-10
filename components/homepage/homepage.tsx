@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useSyncExternalStore, type AnimationEvent 
 import Image from 'next/image';
 import Link from 'next/link';
 import { useTheme, applyThemeClient } from '@/components/theme-toggle';
+import { BugLab } from './bug-lab';
 
 type IconName =
   | 'arrow'
@@ -317,6 +318,8 @@ function Homepage({ signedIn = false }: { signedIn?: boolean }) {
           </div>
         </div>
       </section>
+
+      <BugLab />
 
       <section className="section ziki-intro" id="what-is-ziki" aria-labelledby="what-is-ziki-title">
         <div className="ziki-intro-title">
