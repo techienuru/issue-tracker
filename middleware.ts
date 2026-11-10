@@ -48,6 +48,7 @@ export function isPublicPath(
     pathWithoutBase.startsWith("/compare/") ||
     // Old business links from earners' emails (#earn-outreach): opened by people who aren't signed in.
     /^\/r\/[a-z0-9]{4,16}$/.test(pathWithoutBase) ||
+    pathWithoutBase === "/demo/ideas" ||
     isAuthPage ||
     isPasswordResetPage ||
     isPublicAgentPath(pathWithoutBase) ||

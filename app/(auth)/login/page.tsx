@@ -1,4 +1,5 @@
 import { GoogleSignInButton } from "@/components/google-sign-in-button";
+import Link from "next/link";
 import { LoginForm } from "@/components/login-form";
 import { isPasswordAuthEnabled } from "@/lib/auth-mode";
 import { isGoogleOAuthConfigured } from "@/lib/google-oauth";
@@ -95,6 +96,19 @@ export default async function LoginPage({
             </p>
           </div>
         )}
+
+        <div className="rounded-2xl border border-zk-border bg-zk-tint p-4">
+          <p className="text-sm font-semibold text-zk-text">Just looking around?</p>
+          <p className="mt-1 text-sm leading-6 text-zk-text2">
+            Explore a sample project and take a short tour. No account is needed, and nothing you do there is saved.
+          </p>
+          <Link
+            href="/demo/ideas"
+            className="mt-3 inline-flex min-h-10 items-center rounded-xl bg-zk-accent px-4 py-2 text-sm font-bold text-white hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zk-accent"
+          >
+            Explore demo
+          </Link>
+        </div>
 
         <AuthLegalNote />
       </AuthSplitFrame>
