@@ -98,15 +98,15 @@ export default async function LoginPage({
         )}
 
         <div className="rounded-2xl border border-zk-border bg-zk-tint p-4">
-          <p className="text-sm font-semibold text-zk-text">Just looking around?</p>
+          <p className="text-sm font-semibold text-zk-text">Want a quick tour?</p>
           <p className="mt-1 text-sm leading-6 text-zk-text2">
-            Explore a sample project and take a short tour. No account is needed, and nothing you do there is saved.
+            Preview the Ideas page and see how to share a suggestion and follow its progress.
           </p>
           <Link
             href="/demo/ideas"
             className="mt-3 inline-flex min-h-10 items-center rounded-xl bg-zk-accent px-4 py-2 text-sm font-bold text-white hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zk-accent"
           >
-            Explore demo
+            Take a tour
           </Link>
         </div>
 
